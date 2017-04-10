@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+	<!-- Define Struts Tile for Front-End module -->
+	<definition name="Default.Web" template="/layout/layout-default.jsp">
+		<put-attribute name="header" value="/layout/header.jsp" />
+		<put-attribute name="footer" value="/layout/footer.jsp" />
+		<put-attribute name="body" value="/layout/body-empty.jsp" />
+
+		<put-list-attribute name="default-css">
+			<add-attribute value="/css/jquery-ui.css" />
+			<add-attribute value="/css/main.css" />
+		</put-list-attribute>
+		<put-list-attribute name="default-js">
+			<add-attribute value="/js/jquery-1.7.1.js" />
+		</put-list-attribute>
+	</definition>
+
+	<definition name="Default.SystemException" extends="Default.Web">
+		<put-attribute name="body" value="/exception/system_exception.jsp" />
+		<put-list-attribute name="js">
+		</put-list-attribute>
+		<put-list-attribute name="css">
+		</put-list-attribute>
+	</definition>
+
+	<definition name="HomePage" extends="Default.Web">
+		<put-attribute name="body" value="/index.jsp" />
+		<put-list-attribute name="js">
+		</put-list-attribute>
+		<put-list-attribute name="css">
+		</put-list-attribute>
+	</definition>
+
+</tiles-definitions>
