@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <!-- Base Definition -->
+    <definition name="baseLayout" template="/layouts/BaseLayout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="screenname" value="" />
+        <put-attribute name="menu" value="" />
+        <put-attribute name="body" value="" />
+    </definition>
+
+    <!-- LOGIN -->
+    <definition name="login" extends="baseLayout">
+        <put-attribute name="title" value="LOGIN" />
+        <put-attribute name="screenname" value="LOGIN" />
+        <put-attribute name="body" value="/WEB-INF/pages/login.jsp" />
+    </definition>
+    
+    <!-- 403 -->
+    <definition name="error" extends="baseLayout">
+        <put-attribute name="title" value="403" />
+        <put-attribute name="screenname" value="403" />
+        <put-attribute name="body" value="/WEB-INF/pages/403.jsp" />
+    </definition>
+
+    <!-- HOME -->
+    <definition name="home" extends="baseLayout">
+        <put-attribute name="title" value="HOME" />
+        <put-attribute name="screenname" value="HOME" />
+        <put-attribute name="body" value="/WEB-INF/pages/home.jsp" />
+    </definition>
+    
+</tiles-definitions>
