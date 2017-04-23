@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.framgia.users.dao.UserDao;
 import com.framgia.users.model.Permissions;
+import com.framgia.users.model.Users;
 
 /**
  * MyUserDetailsService.java
@@ -34,7 +35,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 
-		com.framgia.users.model.Users user = userDao.findByUserName(username);
+		Users user = userDao.findByUserName(username);
 		List<GrantedAuthority> authorities = buildUserAuthority(user.getPermissions());
 
 		return buildUserForAuthentication(user, authorities);
@@ -42,7 +43,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	}
 
 	// org.springframework.security.core.userdetails.User
-	private User buildUserForAuthentication(com.framgia.users.model.Users user, List<GrantedAuthority> authorities) {
+	private User buildUserForAuthentication(Users user, List<GrantedAuthority> authorities) {
 		return new User(user.getUserName(), user.getPassWord(), true, true, true, true, authorities);
 	}
 
