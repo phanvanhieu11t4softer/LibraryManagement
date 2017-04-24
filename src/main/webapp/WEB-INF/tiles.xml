@@ -29,7 +29,30 @@
     <definition name="home" extends="baseLayout">
         <put-attribute name="title" value="HOME" />
         <put-attribute name="screenname" value="HOME" />
+        <put-attribute name="menu" value="/WEB-INF/pages/admin/Menu.jsp" />
         <put-attribute name="body" value="/WEB-INF/pages/home.jsp" />
     </definition>
+    
+    <!-- Admin - management users -->
+    <definition name="managementUsers" extends="baseLayout">
+        <put-attribute name="title" value="Management Users" />
+        <put-attribute name="screenname" value="Management Users" />
+        <put-attribute name="body" value="/WEB-INF/pages/admin/managementUsers.jsp" />
+    </definition>
+    <!-- Admin - management users _ detail -->
+    <definition name="managementUserDetail" extends="baseLayout">
+        <put-attribute name="title" value="Management Users" />
+        <put-attribute name="screenname" value="Management Users" />
+        <put-attribute name="body" value="/WEB-INF/pages/admin/detailUser.jsp" />
+    </definition>
+    
+    <!-- IMPORT DATA -->
+    <definition name="importdata" extends="baseLayout">
+        <put-attribute name="title" value="IMPORT DATA" />
+        <put-attribute name="screenname" value="IMPORT DATA" />
+        <put-attribute name="menu" value="/WEB-INF/pages/admin/Menu.jsp" />
+        <put-attribute name="body" value="/WEB-INF/pages/import_data.jsp" />
+    </definition>
+    
     
 </tiles-definitions>
