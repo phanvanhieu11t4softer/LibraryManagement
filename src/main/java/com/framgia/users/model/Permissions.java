@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Permissions.java description table Permissions
  * 
@@ -19,7 +21,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Permissions", catalog = "Library")
-public class Permissions {
+public class Permissions implements java.io.Serializable{
+	
+	private static final long serialVersionUID = -5083671866629810625L;
+	
     private Integer permissionsId;
     private String permissionName;
     private String description;
@@ -133,6 +138,7 @@ public class Permissions {
         this.userUpdate = userUpdate;
     }
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
     public Set<Users> getUsers() {
         return users;

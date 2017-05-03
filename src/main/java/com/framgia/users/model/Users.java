@@ -2,7 +2,7 @@ package com.framgia.users.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Users.java description table Users
@@ -21,7 +23,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Users", catalog = "Library") 
-public class Users {
+public class Users implements java.io.Serializable{
+
+	private static final long serialVersionUID = 2631670920800778518L;
+	
 	private Integer userId;
 	private String userName;
 	private String passWord;
@@ -94,7 +99,8 @@ public class Users {
 		this.userId = userId;
 	}
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "permissionsId", nullable = false)
 	public Permissions getPermissions() {
 		return permissions;
@@ -122,6 +128,7 @@ public class Users {
 		this.passWord = passWord;
 	}
 	
+	@Temporal(TemporalType.DATE)
 	@Column(name = "birthDate", nullable = false)
 	public Date getBirthDate() {
 		return birthDate;
@@ -185,6 +192,7 @@ public class Users {
 		this.deleteFlag = deleteFlag;
 	}
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateCreate", nullable = false)
 	public Date getDateCreate() {
 		return dateCreate;
@@ -203,6 +211,7 @@ public class Users {
 		this.userCreate = userCreate;
 	}
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateUpdate", nullable = false)
 	public Date getDateUpdate() {
 		return dateUpdate;
