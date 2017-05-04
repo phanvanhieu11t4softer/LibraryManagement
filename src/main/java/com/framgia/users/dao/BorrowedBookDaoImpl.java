@@ -93,4 +93,31 @@ public class BorrowedBookDaoImpl extends AbstractDao<Integer, Borroweds> impleme
 			return queryList;
 		}
 	}
+
+	@SuppressWarnings("finally")
+	@Override
+	public Borroweds findByIdBorrowed(int idBorrowed) {
+		
+		Borroweds borrowed = new Borroweds();
+		try {
+			Session session = getOpenSession();
+			String sql = "FROM Borroweds where deleteFlag = :deleteFlag AND borrowedId = :borrowedId";
+			
+			Query query = session.createQuery(sql);
+
+			query.setParameter("deleteFlag", ConstantModel.DEL_FLG);
+
+			query.setParameter("borrowedId", idBorrowed);
+			
+			if (query.list().size() > 0) {
+				borrowed = (Borroweds) query.list().get(0);
+			}
+
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			return borrowed;
+		}
+	}
 }

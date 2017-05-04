@@ -15,4 +15,6 @@ public interface ManagementBorrowedBookService {
 	
 	// Search infomation borowed book with init screen management borrowed books
 	List<BorrowedInfo> getBorrowedInfoByFindCondition(ConditionSearchBorrowed condition);
+
+	BorrowedInfo findByIdBorrowed(int idBorrowed);
 }
