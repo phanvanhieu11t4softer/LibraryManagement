@@ -128,7 +128,7 @@ public class Author {
 		return userUpdate;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "author")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
 	public Set<BookDetail> getBookDetail() {
 		return bookDetail;
 	}

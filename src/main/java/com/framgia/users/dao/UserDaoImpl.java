@@ -38,7 +38,7 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 		List<Users> users = new ArrayList<Users>();
 
 		users = getSession().createQuery("from Users where userName=:username and deleteFlag=:delFlg")
-		        .setParameter("username", username).setParameter("delFlg", ConstantModel.DEL_FLG).list();
+				.setParameter("username", username).setParameter("delFlg", ConstantModel.DEL_FLG).list();
 
 		if (users.size() > 0) {
 

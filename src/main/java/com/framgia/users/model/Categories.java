@@ -135,7 +135,7 @@ public class Categories {
 		this.userUpdate = userUpdate;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "categories")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "categories")
 	public Set<Book> getBook() {
 		return book;
 	}

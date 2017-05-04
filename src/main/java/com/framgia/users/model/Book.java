@@ -44,7 +44,7 @@ public class Book {
 	private Date dateUpdate;
 	private String userUpdate;
 	private Set<BookDetail> bookDetail = new HashSet<BookDetail>(0);
-	
+
 	public Book() {
 	}
 
@@ -84,13 +84,13 @@ public class Book {
 		return bookCode;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "categoriesId", nullable = false)
 	public Categories getCategories() {
 		return categories;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "publishersId", nullable = false)
 	public Publishers getPublishers() {
 		return publishers;
@@ -222,7 +222,7 @@ public class Book {
 		this.userUpdate = userUpdate;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "book")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
 	public Set<BookDetail> getBookDetail() {
 		return bookDetail;
 	}

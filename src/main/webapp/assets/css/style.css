@@ -1679,3 +1679,7 @@ button.btnScrUser {
 	float: left;
 	width: 70%;
 }
+.file {
+	visibility: hidden;
+	position: absolute;
+}
