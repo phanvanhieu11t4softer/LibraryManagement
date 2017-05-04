@@ -3,8 +3,6 @@ function submitClear() {
 	    $('#txtPermission').val("0");
 }
 $("#btn_seach").click(function(e) {
-	
-
 
     $('#messageContainer').html('');
     e.preventDefault();
@@ -56,13 +54,13 @@ $("#btn_seach").click(function(e) {
                     });
                 } else {
                     $('#resultSearch').addClass('hidden_elem');
-                    $('#messageContainer').html('<p>No search results found. Please input condition other</p>');
+                    $('#messageContainer').html($("#mgsNoResult").text());
                 }
             },
             error : function(xhr, status, error) {
                 $('#resultSearch').addClass(
                         'hidden_elem');
-                $('#messageContainer').html('<p>No search results found. Please input condition other</p>');
+                $('#messageContainer').html($("#mgsNoResult").text());
             }
         });
     
@@ -114,14 +112,14 @@ function clickBtnDel(idUser, el) {
 					a.row($(el).parents('tr')).remove().draw();
 					
 					// Message
-					$('#messageContainer').html('Delete row success.');
+					$('#messageContainer').html($("#mgsSuccess").text());
 				}
 				else {
-					$('#messageContainer').html('Delete row error.');
+					$('#messageContainer').html($("#mgsError").text());
 				}
 			},
 			error : function(error) {
-				$('#messageContainer').html('Delete row error.');
+				$('#messageContainer').html($("#mgsError").text());
 			}
 		});
 	}
@@ -135,22 +133,21 @@ $("#updateForm").submit(function(e) {
 		var postData = $(this).serializeArray();
 		var formURL = $(this).attr("action");
 		$.ajax({
-		    url : formURL,
-		    type : "POST",
-		    data : postData,
+			url : formURL,
+			type : "POST",
+			data : postData,
 		    success : function(data, textStatus, jqXHR) {
-			    
-				    $('#messageContainer').html('Update user success.');
-					updateInputToLbl();
-				    $(".lableForm").removeClass('hidden_elem');
-					$(".editForm").addClass('hidden_elem');
-					$('#editbtn').hide();
-					
-					$("#lblDateUpdate").html(data.dateUpdate);
-					$("#lblUserUpdate").html(data.userUpdate);
+				$('#messageContainer').html($("#mgsSuccess").text());
+				updateInputToLbl();
+				$(".lableForm").removeClass('hidden_elem');
+				$(".editForm").addClass('hidden_elem');
+				$('#editbtn').hide();
+
+				$("#lblDateUpdate").html(data.dateUpdate);
+				$("#lblUserUpdate").html(data.userUpdate);
 		    },
 		    error : function(jqXHR, textStatus, errorThrown) {
-			    $('#messageContainer').html('Update user error.');
+		    	$('#messageContainer').html($("#mgsError").text());
 		    }
 		});
 		e.preventDefault(); // STOP default action
@@ -344,8 +341,3 @@ $("#btn_download").click(function() {
 	$("#searchForm").submit();
 	
 });
-	
-
-
-
-
