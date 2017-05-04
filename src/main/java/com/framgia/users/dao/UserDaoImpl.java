@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
@@ -26,18 +27,27 @@ import com.framgia.util.DateUtil;
 @Repository("userDao")
 public class UserDaoImpl extends AbstractDao<Integer, Users> implements ConstantModel, UserDao {
 
+	// log
+	private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Users findByUserName(String username) {
+
+		logger.info("Search user by username.");
 		List<Users> users = new ArrayList<Users>();
 
 		users = getSession().createQuery("from Users where userName=:username and deleteFlag=:delFlg")
-				.setParameter("username", username).setParameter("delFlg", ConstantModel.DEL_FLG).list();
+		        .setParameter("username", username).setParameter("delFlg", ConstantModel.DEL_FLG).list();
 
 		if (users.size() > 0) {
 
+			logger.info("End search user by username.");
+
 			return users.get(0);
 		} else {
+
+			logger.error("Search user by username ERROR");
 
 			return null;
 		}
@@ -46,6 +56,8 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 	@SuppressWarnings({ "unchecked", "finally" })
 	@Override
 	public List<Users> findByConditon(String txtName, int txtPermission) {
+
+		logger.info("Search list user.");
 
 		List<Users> queryList = new ArrayList<Users>();
 
@@ -72,9 +84,9 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 			}
 
 			queryList = query.list();
-
+			logger.info("Search list user end.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error search list user: " + e.getMessage());
 		} finally {
 			return queryList;
 		}
@@ -83,6 +95,7 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 
 	@Override
 	public boolean delLogicUser(int idUser, String userUpd, Date dateUpdate) {
+		logger.info("Delete user.");
 
 		try {
 
@@ -103,9 +116,12 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 
 				getSession().saveOrUpdate(user);
 
+				logger.info("Delete user end.");
+
 				return true;
 			}
 		} catch (Exception e) {
+			logger.error("Error delete user: " + e.getMessage());
 
 			return false;
 		}
@@ -116,9 +132,10 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 	@SuppressWarnings("finally")
 	@Override
 	public Users findById(int idUser) {
+		logger.info("Search user by is.");
 
 		Users user = new Users();
-		
+
 		Session session = getOpenSession();
 
 		try {
@@ -133,9 +150,10 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 			if (query.list().size() > 0) {
 				user = (Users) query.list().get(0);
 			}
+			logger.info("Search user by id end.");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error search user by id: " + e.getMessage());
 		} finally {
 			return user;
 		}
@@ -144,7 +162,7 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 
 	@Override
 	public Users updateUser(Users user) {
-
+		logger.info("Update user.");
 		try {
 			Criteria crit = getSession().createCriteria(Users.class);
 
@@ -188,12 +206,16 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 				}
 				Date dateUpd = DateUtil.getDateNow();
 				userUpd.setDateUpdate(dateUpd);
+				userUpd.setUserUpdate(user.getUserUpdate());
 
 				getSession().saveOrUpdate(userUpd);
+
+				logger.info("Update user end.");
 
 				return userUpd;
 			}
 		} catch (Exception e) {
+			logger.error("Error update Book: " + e.getMessage());
 
 			return null;
 		}

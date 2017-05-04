@@ -94,7 +94,6 @@
 									<tr>
 										<th>Borrowed code</th>
 										<th>Username</th>
-										<th>Email</th>
 										<th>Intend borrowed</th>
 										<th>Intend payment</th>
 										<th>Borrowed</th>

@@ -68,8 +68,8 @@ $("#btn_seach").click(function(e) {
 });
 //Detail user
 $(".birthday_picker").datepicker({
-	dateFormat : 'yy/mm/dd',
-	minDate : new Date('1920/01/01'),
+	dateFormat : 'yy-mm-dd',
+	minDate : new Date('1920-01-01'),
 	maxDate : '-1d',
 	onSelect: function(dateText) {
 		if (dateText != $('#lblBirthDate').text()) {

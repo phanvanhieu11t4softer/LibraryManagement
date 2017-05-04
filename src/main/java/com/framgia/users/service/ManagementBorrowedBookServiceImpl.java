@@ -5,10 +5,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.framgia.users.bean.BorrowedInfo;
+import com.framgia.users.dao.BookDao;
 import com.framgia.users.dao.BorrowedBookDao;
+import com.framgia.users.model.Book;
+import com.framgia.users.model.BorrowedDetails;
 import com.framgia.users.model.Borroweds;
+import com.framgia.users.model.ConstantModel;
 import com.framgia.util.ConditionSearchBorrowed;
 import com.framgia.util.ConvertDataModelAndBean;
 
@@ -24,6 +30,9 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 
 	@Autowired
 	private BorrowedBookDao borrowedBookDao;
+
+	@Autowired
+	private BookDao bookDao;
 
 	@Override
 	public List<BorrowedInfo> getBorrowedInfoByFindCondition(ConditionSearchBorrowed condition) {
@@ -44,4 +53,77 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 		return bBorrowedInfo;
 	}
 
+	@Override
+	public BorrowedInfo findByIdBorrowed(int idBorrowed) {
+
+		Borroweds mBorrowed = borrowedBookDao.findByIdBorrowed(idBorrowed);
+		BorrowedInfo bBorrowed = new BorrowedInfo();
+
+		if (mBorrowed != null) {
+			bBorrowed = ConvertDataModelAndBean.converBorrowedModelToBean(mBorrowed);
+		}
+
+		return bBorrowed;
+	}
+
+	@Transactional
+	@Override
+	public BorrowedInfo update(BorrowedInfo bBorrowed) {
+
+		// Update Borrowed
+		Borroweds mUpdBorrowed = new Borroweds();
+
+		mUpdBorrowed = ConvertDataModelAndBean.converBorrowedBeanToModel(bBorrowed);
+
+		Borroweds mBorroweds = borrowedBookDao.update(mUpdBorrowed);
+
+		if (mBorroweds != null) {
+			BorrowedInfo updBorroweds = ConvertDataModelAndBean.converBorrowedModelToBean(mBorroweds);
+
+			// Update Borrowed Detail
+			boolean flgUpdBorrowedsDetail = true;
+			boolean flgUpdBoook = true;
+
+			BorrowedDetails updBookDetail = new BorrowedDetails();
+
+			for (BorrowedDetails mUpdBorrowedDetails : mUpdBorrowed.getBorrowedDetails()) {
+				mUpdBorrowedDetails.setUserUpdate(bBorrowed.getUserUpdate());
+				updBookDetail = borrowedBookDao.updateBorrowedDetails(mUpdBorrowedDetails);
+
+				if (null != updBookDetail && (ConstantModel.BOR_STATUS_CANCEL.equals(mUpdBorrowed.getStatus())
+				        || ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus()))) {
+					flgUpdBoook = bookDao.update(updBookDetail.getBook());
+					if (!flgUpdBoook) {
+						break;
+					}
+				} else if (null == updBookDetail) {
+					flgUpdBorrowedsDetail = false;
+				}
+			}
+
+			if (ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus())
+			        && mUpdBorrowed.getBorrowedDetails().size() == 0) {
+				System.out.println("size " + mBorroweds.getBorrowedDetails().size());
+				for (BorrowedDetails mUpdBorrowedDetails : mBorroweds.getBorrowedDetails()) {
+					Book mUpdBook = new Book();
+					mUpdBook.setUserUpdate(mUpdBorrowed.getUserUpdate());
+					mUpdBook.setBookId(mUpdBorrowedDetails.getBook().getBookId());
+
+					flgUpdBoook = bookDao.update(mUpdBook);
+
+					if (!flgUpdBoook) {
+						break;
+					}
+				}
+			}
+
+			if (null != updBorroweds && flgUpdBorrowedsDetail && flgUpdBoook) {
+				TransactionAspectSupport.currentTransactionStatus().isCompleted();
+				return updBorroweds;
+			}
+		}
+
+		TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
+		return null;
+	}
 }

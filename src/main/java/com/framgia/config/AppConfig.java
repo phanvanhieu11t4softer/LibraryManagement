@@ -5,14 +5,19 @@ import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -39,6 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ComponentScan({ "com.framgia.*" })
 @EnableTransactionManagement
 @Import({ SecurityConfig.class })
+@PropertySource("classpath:configMail.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {
 
 	/**
@@ -104,7 +110,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		ds.setDriverClassName("com.mysql.jdbc.Driver");
 		ds.setUrl("jdbc:mysql://localhost:3306/Library");
 		ds.setUsername("root");
-		ds.setPassword("VanVtt@123");
+		ds.setPassword("123456");
 		return ds;
 	}
 
@@ -133,7 +139,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	public MultipartResolver multipartResolver() {
 		return new StandardServletMultipartResolver();
 	}
-	
+
 	/**
 	 * Configure MessageSource
 	 */
@@ -142,5 +148,28 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename("messages");
 		return messageSource;
+	}
+
+	@Autowired
+	private Environment env;
+
+	@Bean
+	public JavaMailSender getMailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+		// Using gmail
+		mailSender.setHost(env.getProperty("host"));
+		mailSender.setPort(Integer.parseInt(env.getProperty("port")));
+		mailSender.setUsername(env.getProperty("username"));
+		mailSender.setPassword(env.getProperty("password"));
+
+		Properties javaMailProperties = new Properties();
+		javaMailProperties.put(env.getProperty("mail.smtp.starttls"), "true");
+		javaMailProperties.put(env.getProperty("mail.smtp.auth"), "true");
+		javaMailProperties.put(env.getProperty("mail.transport.protocol"), env.getProperty("mail.transport.protocol.value"));
+		javaMailProperties.put(env.getProperty("mail.debug"), "true");
+
+		mailSender.setJavaMailProperties(javaMailProperties);
+		return mailSender;
 	}
 }

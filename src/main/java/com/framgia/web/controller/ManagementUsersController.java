@@ -1,14 +1,19 @@
 package com.framgia.web.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
@@ -29,8 +34,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.framgia.users.bean.PermissionInfo;
 import com.framgia.users.bean.UserInfo;
+import com.framgia.users.service.MailService;
 import com.framgia.users.service.ManagementUsersService;
 import com.framgia.util.Constant;
+import com.framgia.util.CsvFileWriter;
 import com.framgia.util.DateUtil;
 
 /**
@@ -41,12 +48,21 @@ import com.framgia.util.DateUtil;
  */
 @Controller
 public class ManagementUsersController {
-	
-    @Autowired
-    MessageSource messageSource;
-    
+
+	// log
+	private static final Logger logger = Logger.getLogger(ManagementUsersController.class);
+
+	@Autowired
+	MessageSource messageSource;
+
 	@Autowired
 	ManagementUsersService managementUsersService;
+
+	@Autowired
+	MailService mailService;
+
+	// File input stream
+	private FileInputStream inputStream;
 
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
@@ -55,6 +71,7 @@ public class ManagementUsersController {
 
 	@RequestMapping(value = "/managementUsers", method = RequestMethod.GET)
 	public ModelAndView referencePage() {
+		logger.info("call service: get list permission");
 
 		// get value permission role for select box
 		List<PermissionInfo> permissionInfo = managementUsersService.findByDelFlg();
@@ -64,7 +81,8 @@ public class ManagementUsersController {
 
 	@RequestMapping(value = "/managementUsers/search", method = RequestMethod.POST)
 	public @ResponseBody List<UserInfo> findByCondition(@RequestParam(value = "txtName") String txtName,
-			@RequestParam(value = "txtPermission") int txtPermission, ModelMap model) {
+	        @RequestParam(value = "txtPermission") int txtPermission, ModelMap model) {
+		logger.info("call service; get lisst user");
 
 		List<UserInfo> userInfo = managementUsersService.findByUsersWithCondition(txtName, txtPermission);
 
@@ -74,6 +92,7 @@ public class ManagementUsersController {
 	@RequestMapping(value = "/managementUsers/delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public int delLogicUser(@PathVariable("id") int idUser, @RequestParam(value = "dateUpd") String dateUpd) {
+		logger.info("call service: delete user");
 
 		return managementUsersService.delLogicUser(idUser, getUserName(), dateUpd);
 
@@ -81,6 +100,7 @@ public class ManagementUsersController {
 
 	@RequestMapping(value = "/managementUsers/detail/{id}", method = RequestMethod.GET)
 	public ModelAndView detailPage(@PathVariable("id") int idUser) {
+		logger.info("call service: get user and get list permission");
 
 		// get infor user
 		UserInfo user = managementUsersService.findByIdUser(idUser);
@@ -99,13 +119,15 @@ public class ManagementUsersController {
 	@RequestMapping(value = "/managementUsers/update", method = RequestMethod.POST)
 	public @ResponseBody UserInfo updateUsser(@ModelAttribute("user") UserInfo user, BindingResult result,
 			ModelMap model) {
-
+		logger.info("call service: to update user");
+		
 		user.setUserUpdate(getUserName());
 		UserInfo resultUpd = null;
 		try {
 			resultUpd = managementUsersService.updateUser(user);
 
 		} catch (Exception e) {
+			logger.error("Error update user: " + e.getMessage());
 		}
 
 		return resultUpd;
@@ -114,49 +136,49 @@ public class ManagementUsersController {
 	@RequestMapping(value = "/managementUsers/downloadCSV", method = RequestMethod.POST)
 	public void downloadCSV(HttpServletResponse response, @RequestParam(value = "txtName") String txtName,
 			@RequestParam(value = "txtPermission") int txtPermission, ModelMap model) throws IOException {
-		response.setContentType(Constant.TYPE_FILE_USER);
-		String reportName = Constant.NAME_REPORT_USER;
+		logger.info("call service: download csv with condition search");
 		
-		response.setHeader("Content-disposition", "attachment;filename=" + reportName);
+		String FILE_PATH = System.getProperty("java.io.tmpdir");
+		String curTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"));
+		String filePath = FILE_PATH + "/" + Constant.NAME_REPORT_USER + curTime + Constant.EXTERNAL;
 
-		ArrayList<String> rows = new ArrayList<String>();
-		rows.add(Constant.HEADER_CSV_USER);
-		rows.add("\n");
-		
+		// get value
 		List<UserInfo> userInfo = managementUsersService.findByUsersWithCondition(txtName, txtPermission);
 		
-		if (userInfo.size() == 0) {
-			rows.add(messageSource.getMessage("download_no_result", null, Locale.getDefault()));
+		// Write CSV
+		CsvFileWriter.writeUsersCsv(filePath, userInfo);
+
+		File downloadFile = new File(filePath);
+		OutputStream outStream = null;
+		try {
+			inputStream = new FileInputStream(downloadFile);
+
+			response.setContentLength((int) downloadFile.length());
+
+			// response header details
+			String headerKey = "Content-Disposition";
+			String fileName = URLEncoder.encode(downloadFile.getName(), "UTF-8");
+			response.setHeader(headerKey, "attachment; filename*=UTF-8''" + fileName);
+
+			// response
+			outStream = response.getOutputStream();
+			IOUtils.copy(inputStream, outStream);
+
+		} catch (Exception e) {
+			logger.error("Erro download csv: " + e.getMessage());
+		} finally {
+			try {
+				if (null != inputStream)
+					inputStream.close();
+				if (null != inputStream)
+					outStream.close();
+
+				// Delete file on server
+				downloadFile.delete();
+			} catch (IOException e) {
+				logger.error("Erro download csv: " + e.getMessage());
+			}
 		}
-		
-		for (UserInfo item : userInfo) {
-			String dataRow = item.getUserId() + "," +
-							item.getUserName() + "," +
-							item.getPermissions().getPermissionName() + "," +
-							item.getName() + "," +
-							item.getEmail() + "," +
-							item.getBirthDate() + "," +
-							item.getAddress() + "," +
-							item.getSex() + "," +
-							item.getPhone() + "," +
-							item.getUserCreate() + "," +
-							item.getDateCreate() + "," +
-							item.getUserUpdate() + "," +
-							item.getDateUpdate();
-			
-			rows.add(dataRow);
-			rows.add("\n");
-
-		}
-
-		Iterator<String> iter = rows.iterator();
-		while (iter.hasNext()) {
-			String outputString = (String) iter.next();
-			response.getOutputStream().print(outputString);
-		}
-
-		response.getOutputStream().flush();
-
 	}
 
 	public String getUserName() {
