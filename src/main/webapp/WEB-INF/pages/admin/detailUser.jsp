@@ -11,6 +11,9 @@
     <div class="body clearfix mt20 manageUser" id="messageContainer">
     </div>
 </section>
+
+<label id="mgsSuccess" class = "hidden_elem"><spring:message code='update_success' text='' /></label>
+<label id="mgsError" class = "hidden_elem"><spring:message code='update_error' text='' /></label>
 <c:choose>
 	<c:when test="${not empty user.userName }">
 		<spring:url value="/managementUsers/update" var="userActionUrl" />
@@ -178,7 +181,7 @@
 	<c:when test="${empty user.userName}">
 		<section class="bg_white clearfix messageError">
 			<div class="body clearfix mt20 manageUser" id="messageContainer">
-				No found information of user. Please come back page management user to update data.
+				 <spring:message code="no_find_info_detail" text="default text" />
 			</div>
 		</section>
 	</c:when>

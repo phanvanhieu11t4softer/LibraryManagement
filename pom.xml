@@ -102,7 +102,7 @@
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+
 		<!-- spring-context -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -246,12 +246,17 @@
 
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
-		    <groupId>javax.mail</groupId>
-		    <artifactId>mail</artifactId>
-		    <version>1.4</version>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
 		</dependency>
-			
-
+		
+		<!-- commons-csv -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 	</dependencies>
 

@@ -12,8 +12,6 @@
 	</div>
 </section>
 <label id="mgsNoResult" class = "hidden_elem"><spring:message code='no_find_result_search' text='' /></label>
-<label id="mgsSuccess" class = "hidden_elem"><spring:message code='delete_success' text='' /></label>
-<label id="mgsError" class = "hidden_elem"><spring:message code='delete_error' text='' /></label>
 <section class="bg_white clearfix">
 	<div class="body clearfix mt20 manageUser">
 		<div class="panel panel-default">
@@ -21,23 +19,48 @@
 				<h3 class="panel-title">Search area</h3>
 			</div>
 			<div class="panel-body">
-				<spring:url value="/managementUsers/search" var="searchActionUrl" />
+				<spring:url value="/managementBorrowed/search" var="searchActionUrl" />
 				<form role="form" id="searchForm" action="${searchActionUrl}"
 					method="post">
 					<div class="form-group form-group-lg">
 						<div class="col-sm-6">
-							<label>Name</label> <input class="form-control" id="txtName"
-								name="txtName" type="text" placeholder="please input text">
+							<label>Borrowed code</label><input class="form-control" id="txtBorrowedCode"
+								name="txtBorrowedCode" type="text" placeholder="please input text">
 						</div>
 						<div class="col-sm-6">
-							<label>Permission</label>
-							<select id="txtPermission"
-								name="txtPermission" class="form-control">
-								<option value="0" selected="selected"></option>
-								<c:forEach items="${permissionInfo}" var="per">
-									<option value="${per.permissionsId}">${per.permissionName}</option>
-								</c:forEach>
+							<label>Status borrowed</label>
+							<select id="txtStatus"
+								name="txtStatus" class="form-control">
+								<option value="" selected="selected"></option>
+								<option value="1">Request</option>
+								<option value="2">Accept</option>
+								<option value="3">Cancel</option>
+								<option value="4">Borrowed</option>
+								<option value="5">Finish</option>
 							</select>
+						</div>
+						<div class="clearfix" style="padding: 10px;"></div>
+						<div class="col-sm-6">
+							<label>Day intends to borrow  <b>:</b>  Day intends to payment</label>
+							<div class="col-sm-6 intenDateBor" style="padding-left: 0px !important;">
+								<input class="form-control" id="txtIntenDateBor"
+									name="txtIntenDateBor" type="text" placeholder="please input date">
+							</div>
+							<div class="col-sm-6" style="padding-right: 0px !important;">
+								<input class="form-control" id="txtIntenDatePay"
+									name="txtIntenDatePay" type="text" placeholder="please input date">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<label>Day intends to borrow  <b>:</b>  Day intends to payment</label>
+							<div class="col-sm-6" style="padding-left: 0px !important;">
+								<input class="form-control" id="txtDateBor"
+									name="txtDateBor" type="text" placeholder="please input date">
+							</div>
+							<div class="col-sm-6" style="padding-right: 0px !important;">
+								<input class="form-control" id="txtDatePay"
+									name="txtDatePay" type="text" placeholder="please input date">
+							</div>
 						</div>
 						<div class="clearfix"></div>
 					</div>
@@ -69,14 +92,14 @@
 								id="dataTables-result" width="100%">
 								<thead>
 									<tr>
+										<th>Borrowed code</th>
 										<th>Username</th>
-										<th>Name</th>
-										<th>Birthdate</th>
-										<th>Address</th>
 										<th>Email</th>
-										<th>Sex</th>
-										<th>Phone</th>
-										<th>Permission</th>
+										<th>Intend borrowed</th>
+										<th>Intend payment</th>
+										<th>Borrowed</th>
+										<th>Payment</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
