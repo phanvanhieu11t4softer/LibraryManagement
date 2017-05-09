@@ -44,16 +44,4 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 		return bBorrowedInfo;
 	}
 
-	@Override
-	public BorrowedInfo findByIdBorrowed(int idBorrowed) {
-		
-		Borroweds mBorrowed = borrowedBookDao.findByIdBorrowed(idBorrowed);
-		BorrowedInfo bBorrowed = new BorrowedInfo();
-		
-		if (mBorrowed != null) {
-			bBorrowed = ConvertDataModelAndBean.converBorrowedModelToBean(mBorrowed);
-		}
-		
-		return bBorrowed;
-	}
 }

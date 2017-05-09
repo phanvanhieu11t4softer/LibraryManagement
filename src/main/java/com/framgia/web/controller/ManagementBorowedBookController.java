@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,6 +81,7 @@ public class ManagementBorowedBookController {
 		return borrowedInfo;
 	}
 
+
 	@RequestMapping(value = "managementBorrowed/downloadCSV", method = RequestMethod.POST)
 	public void downloadCondition(HttpServletResponse response,
 			@RequestParam(value = "txtBorrowedCode") String txtBorrowedCode,
@@ -135,15 +135,4 @@ public class ManagementBorowedBookController {
 		}
 	}
 
-	@RequestMapping(value = "/managementBorrowed/detail/{id}", method = RequestMethod.GET)
-	public ModelAndView detailPage(@PathVariable("id") int idBorrowed) {
-
-		// get infor borrowed
-		BorrowedInfo borrowedInfo = managementBorrowedBookService.findByIdBorrowed(idBorrowed);
-
-		// render page detail borrowed
-		ModelAndView mv = new ModelAndView("managementBorrowedDetail", "borrowedInfo", borrowedInfo);
-
-		return mv;
-	}
 }

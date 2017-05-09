@@ -16,9 +16,9 @@ public class Constant {
 
 	// header of file report of screen management users
 	public final static String HEADER_CSV_USER = "User id, Username, Permission, Full name, Email, Birthday, Address, Gender, Phone number, User create, Date create, User update, Date update";
-
+	
 	// CSV file name
 	public final static String NAME_REPORT_BORROWED = "Download_Report_Borrowed";
-
+	
 	public final static String EXTERNAL = ".csv";
 }
