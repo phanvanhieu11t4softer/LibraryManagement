@@ -1557,7 +1557,7 @@ div.error {
 	display: none;
 	margin-left: 10px;
 	color: #f90202;
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .success {
@@ -1621,7 +1621,7 @@ div.error {
 }
 
 .hidden_elem {
-	display: none;
+	display: none !important;
 }
 
 section div.manageUser {
@@ -1651,9 +1651,31 @@ div.detail-user .detail-user-head-right {
 lable.error {
 	color: #ff1b00;
 }
+
 button.btnScrUser {
-    color: #1065b0;
+	color: #1065b0;
 }
+
 .css-required {
 	border: 1px solid #f90202;
+}
+
+.detail_borrowed {
+	border: 1px solid transparent;
+	border-radius: 4px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	padding: 10px 20px;
+}
+
+.detail-borrowed-left {
+	float: left;
+	width: 30%;
+}
+
+.detail-borrowed-right {
+	float: left;
+	width: 70%;
 }

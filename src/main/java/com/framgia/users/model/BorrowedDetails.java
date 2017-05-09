@@ -4,7 +4,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -75,7 +74,7 @@ public class BorrowedDetails {
 		this.borroweds = borrowed;
 	}
 
-	@OneToOne(targetEntity=Book.class,cascade=CascadeType.ALL)
+	@OneToOne(targetEntity=Book.class)
 	@JoinColumn(name = "bookId", nullable = false)
 	public Book getBook() {
 		return book;

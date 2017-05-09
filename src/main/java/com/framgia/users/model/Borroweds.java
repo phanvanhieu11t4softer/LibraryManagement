@@ -123,7 +123,7 @@ public class Borroweds {
 	}
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "dIntendArrived", nullable = false)
+	@Column(name = "dIntendArrived")
 	public Date getDIntendArrived() {
 		return dIntendArrived;
 	}
@@ -133,7 +133,7 @@ public class Borroweds {
 	}
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "dateBorrrowed", nullable = false)
+	@Column(name = "dateBorrrowed", nullable = true)
 	public Date getDateBorrrowed() {
 		return dateBorrrowed;
 	}
@@ -143,7 +143,7 @@ public class Borroweds {
 	}
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "dateArrived", nullable = false)
+	@Column(name = "dateArrived", nullable = true)
 	public Date getDateArrived() {
 		return dateArrived;
 	}
@@ -160,8 +160,8 @@ public class Borroweds {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "borroweds")
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "borroweds")
 	public Set<BorrowedDetails> getBorrowedDetails() {
 		return borrowedDetailsList;
 	}
