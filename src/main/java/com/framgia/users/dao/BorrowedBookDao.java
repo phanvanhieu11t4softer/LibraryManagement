@@ -7,6 +7,4 @@ import com.framgia.util.ConditionSearchBorrowed;
 
 public interface BorrowedBookDao {
 	List<Borroweds> findByCondition(ConditionSearchBorrowed condition);
-
-	Borroweds findByIdBorrowed(int idBorrowed);
 }
