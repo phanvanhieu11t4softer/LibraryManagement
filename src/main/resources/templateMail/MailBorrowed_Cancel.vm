@@ -1,0 +1,15 @@
+<html>
+	<body>
+		<h3>Dear ${borrowedInfo.userInfo.name},</h3>
+		<div>
+			<p>
+				We sorry must notification with you that borrowed book:: ${borrowedInfo.borrowedCode}
+				 have been ${borrowedInfo.status}.
+				 <br>
+				Please create request borrowed book other or borrowed this book go to back later.
+				<br/>
+				Thanks you very much.
+			</p>
+		</div>
+	</body>
+</html>

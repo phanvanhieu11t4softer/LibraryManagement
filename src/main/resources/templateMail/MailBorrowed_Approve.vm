@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<style>
+			table {
+				border-collapse: collapse;
+			}
+
+			table, td, th {
+				border: 1px solid black;
+				padding: 10px;
+
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Dear ${borrowedInfo.userInfo.name},</h3>
+		<div>
+			<p>
+				We want to send this mail to confirm with you, that your borrowed book: ${borrowedInfo.borrowedCode}
+				 have been ${borrowedInfo.status}.
+				 <br>
+				Detail information:
+			</p>
+			<table>
+				<tr>
+					<th>Book code</th>
+					<th>Book name</th>
+					<th>Categories</th>
+					<th>Publisher</th>
+					<th>Status</th>
+				</tr>
+				#foreach( ${borrowedDetail} in ${borrowedInfo.borrowedDetail} )
+					<tr>
+						<td>${borrowedDetail.bookInfo.bookCode}</td>
+						<td>${borrowedDetail.bookInfo.name}</td>
+						<td>${borrowedDetail.bookInfo.categoriesName}</td>
+						<td>${borrowedDetail.bookInfo.publishersName}</td>
+						<td>${borrowedDetail.status}</td>
+					</tr>
+					
+				#end
+			</table>
+			
+			</p>	
+				<br/>
+				Please go to library to receive book.
+				<br/>
+				Thanks you very much.
+			</p>
+		</div>
+	</body>
+</html>
