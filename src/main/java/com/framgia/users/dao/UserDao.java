@@ -28,6 +28,6 @@ public interface UserDao {
 	Users findById(int idUser);
 
 	// update information user by from
-	Users updateUser(Users uses);
+	boolean updateUser(Users uses);
 
 }

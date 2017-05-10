@@ -161,7 +161,7 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 	}
 
 	@Override
-	public Users updateUser(Users user) {
+	public boolean updateUser(Users user) {
 		logger.info("Update user.");
 		try {
 			Criteria crit = getSession().createCriteria(Users.class);
@@ -212,14 +212,14 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 
 				logger.info("Update user end.");
 
-				return userUpd;
+				return true;
 			}
 		} catch (Exception e) {
 			logger.error("Error update Book: " + e.getMessage());
 
-			return null;
+			return false;
 		}
 
-		return null;
+		return false;
 	}
 }

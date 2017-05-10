@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,8 +18,10 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.framgia.users.bean.PermissionInfo;
 import com.framgia.users.bean.UserInfo;
@@ -62,7 +66,7 @@ public class ManagementUsersController {
 	MailService mailService;
 
 	// File input stream
-	private FileInputStream inputStream;
+	private FileInputStream inputStream;;
 
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
@@ -117,34 +121,45 @@ public class ManagementUsersController {
 	}
 
 	@RequestMapping(value = "/managementUsers/update", method = RequestMethod.POST)
-	public @ResponseBody UserInfo updateUsser(@ModelAttribute("user") UserInfo user, BindingResult result,
-			ModelMap model) {
+	public String updateUsser(@ModelAttribute("user") UserInfo user, BindingResult result,
+	        RedirectAttributes redirectAttributes, ModelMap model) {
 		logger.info("call service: to update user");
-		
-		user.setUserUpdate(getUserName());
-		UserInfo resultUpd = null;
-		try {
-			resultUpd = managementUsersService.updateUser(user);
 
+		if (null == getUserName()) {
+			logger.info("Cannot get username.");
+			return "redirect:/login";
+		}
+
+		user.setUserUpdate(getUserName());
+		try {
+			boolean flagUpdate = managementUsersService.updateUser(user);
+
+			if (flagUpdate) {
+				redirectAttributes.addFlashAttribute("messageUpd",
+				        messageSource.getMessage("update_success", null, Locale.getDefault()));
+			} else {
+				redirectAttributes.addFlashAttribute("messageUpd",
+				        messageSource.getMessage("update_error", null, Locale.getDefault()));
+			}
 		} catch (Exception e) {
 			logger.error("Error update user: " + e.getMessage());
 		}
 
-		return resultUpd;
+		return "redirect:/managementUsers/detail/" + user.getUserId();
 	}
 
 	@RequestMapping(value = "/managementUsers/downloadCSV", method = RequestMethod.POST)
 	public void downloadCSV(HttpServletResponse response, @RequestParam(value = "txtName") String txtName,
-			@RequestParam(value = "txtPermission") int txtPermission, ModelMap model) throws IOException {
+	        @RequestParam(value = "txtPermission") int txtPermission, ModelMap model) throws IOException {
 		logger.info("call service: download csv with condition search");
-		
+
 		String FILE_PATH = System.getProperty("java.io.tmpdir");
 		String curTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"));
 		String filePath = FILE_PATH + "/" + Constant.NAME_REPORT_USER + curTime + Constant.EXTERNAL;
 
 		// get value
 		List<UserInfo> userInfo = managementUsersService.findByUsersWithCondition(txtName, txtPermission);
-		
+
 		// Write CSV
 		CsvFileWriter.writeUsersCsv(filePath, userInfo);
 
@@ -183,8 +198,13 @@ public class ManagementUsersController {
 
 	public String getUserName() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!(auth instanceof AnonymousAuthenticationToken)) {
+			UserDetails userDetail = (UserDetails) auth.getPrincipal();
+			logger.info("username: " + userDetail.getUsername());
 
-		return auth.getName();
+			return userDetail.getUsername();
+		} else {
+			return null;
+		}
 	}
-
 }

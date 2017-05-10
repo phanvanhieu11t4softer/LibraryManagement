@@ -1,6 +1,5 @@
 package com.framgia.users.service;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,26 +112,19 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 
 	@Transactional
 	@Override
-	public UserInfo updateUser(UserInfo user) throws ParseException {
-		// TODO Auto-generated method stub
-		UserInfo userReturn = new UserInfo();
+	public boolean updateUser(UserInfo user) {
 
 		Users userModel = new Users();
 		userModel = ConvertDataModelAndBean.converUserBeanToModel(user);
 
-		Users userUpd = userDao.updateUser(userModel);
+		boolean flagUpd = userDao.updateUser(userModel);
 
-		if (null != userUpd && userUpd.getUserId() != null) {
-
+		if (flagUpd) {
 			TransactionAspectSupport.currentTransactionStatus().isCompleted();
-
-			userReturn = ConvertDataModelAndBean.converUserModelToBean(userUpd);
-
-			userReturn.setDateUpdate(DateUtil.convertDateTimetoString(userUpd.getDateUpdate()));
 		} else {
 			TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
 		}
 
-		return userReturn;
+		return flagUpd;
 	}
 }

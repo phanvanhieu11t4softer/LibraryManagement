@@ -18,8 +18,10 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
@@ -65,8 +67,6 @@ public class ManagementBorowedBookController {
 
 	// File input stream
 	private FileInputStream inputStream;
-
-	private String invalidUsername = "anonymousUser";
 
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
@@ -174,7 +174,8 @@ public class ManagementBorowedBookController {
 			RedirectAttributes redirectAttributes) {
 		logger.info("call service: to update borrowed");
 
-		if (invalidUsername.equals(getUserName())) {
+		if (null == getUserName()) {
+			logger.info("Cannot get username.");
 			return "redirect:/login";
 		}
 
@@ -202,7 +203,13 @@ public class ManagementBorowedBookController {
 
 	public String getUserName() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!(auth instanceof AnonymousAuthenticationToken)) {
+			UserDetails userDetail = (UserDetails) auth.getPrincipal();
+			logger.info("username: " + userDetail.getUsername());
 
-		return auth.getName();
+			return userDetail.getUsername();
+		} else {
+			return null;
+		}
 	}
 }

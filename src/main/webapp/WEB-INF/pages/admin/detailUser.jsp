@@ -8,12 +8,10 @@
  * 18/04/2017
  -->
 <section class="bg_white clearfix messageError">
-    <div class="body clearfix mt20 manageUser" id="messageContainer">
-    </div>
+	<div class="body clearfix mt20 manageUser" id="messageContainer">
+		${messageUpd}
+	</div>
 </section>
-
-<label id="mgsSuccess" class = "hidden_elem"><spring:message code='update_success' text='' /></label>
-<label id="mgsError" class = "hidden_elem"><spring:message code='update_error' text='' /></label>
 <c:choose>
 	<c:when test="${not empty user.userName }">
 		<spring:url value="/managementUsers/update" var="userActionUrl" />
@@ -34,7 +32,7 @@
 							<div class="detail-user-head-right">
 								<button onclick="clickBtnEdit()" id="editbtn" type="button"
 									class="btnScrUser lableForm btn btn-detail">Edit</button>
-								<button id="savebtn" type="submit"
+								<button id="savebtn" type="button"
 									class="btnScrUser editForm hidden_elem btn btn-detail">Save</button>
 								<button onclick="clickBtnCancel()" id="cancelbtn" type="button"
 									class="btnScrUser editForm hidden_elem btn btn-detail">Cancel</button>
