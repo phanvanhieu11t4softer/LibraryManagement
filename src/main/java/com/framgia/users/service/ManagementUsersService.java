@@ -32,4 +32,12 @@ public interface ManagementUsersService {
 
 	// update information user by from
 	boolean updateUser(UserInfo uses);
+
+	UserInfo updateForgotPassword(String email);
+
+	String findByPassword(int idUser, String password);
+
+	String findByToken(int idUser, String token);
+
+	boolean updatePassword(int id, String token, String currencePass, String password);
 }

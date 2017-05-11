@@ -38,7 +38,7 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 		List<Users> users = new ArrayList<Users>();
 
 		users = getSession().createQuery("from Users where userName=:username and deleteFlag=:delFlg")
-				.setParameter("username", username).setParameter("delFlg", ConstantModel.DEL_FLG).list();
+		        .setParameter("username", username).setParameter("delFlg", ConstantModel.DEL_FLG).list();
 
 		if (users.size() > 0) {
 
@@ -221,5 +221,84 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 		}
 
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Users updatePassword(Users user) {
+
+		logger.info("Update password.");
+		try {
+			Criteria crit = getSession().createCriteria(Users.class);
+
+			if (null != user.getEmail()) {
+				crit.add(Restrictions.eq("email", user.getEmail()));
+			}
+
+			if (null != user.getUserId()) {
+				crit.add(Restrictions.eq("userId", user.getUserId()));
+			}
+			crit.add(Restrictions.eq("deleteFlag", ConstantModel.DEL_FLG));
+			// Here is updated code
+			List<Users> items = crit.list();
+
+			if (items != null && items.size() > 0) {
+				Users userUpd = (Users) items.get(0);
+
+				userUpd.setPassWord(user.getPassWord());
+				userUpd.setUserUpdate(user.getUserUpdate());
+				userUpd.setTokenResetPassword(user.getTokenResetPassword());
+				userUpd.setDateUpdate(DateUtil.getDateNow());
+
+				getSession().saveOrUpdate(userUpd);
+
+				logger.info("Update password end.");
+				return userUpd;
+			}
+		} catch (Exception e) {
+			logger.error("Error update password: ", e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String findByPassword(int idUser, String password) {
+		logger.info("Check password is correc.");
+		List<Users> users = new ArrayList<Users>();
+
+		users = getOpenSession().createQuery("from Users where userName=:userName and passWord=:password")
+		        .setParameter("userName", idUser).setParameter("password", password).list();
+
+		if (users.size() > 0) {
+			logger.info("End search user by password.");
+
+			return users.get(0).getUserName();
+
+		} else {
+			logger.error("Search user by password ERROR");
+
+			return null;
+		}
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public String findByToken(int idUser, String token) {
+		logger.info("Check token reset password is correc.");
+		List<Users> users = new ArrayList<Users>();
+
+		users = getOpenSession().createQuery("from Users where userId=:userId and tokenResetPassword=:tokenResetPassword")
+		        .setParameter("userId", idUser).setParameter("tokenResetPassword", token).list();
+
+		if (users.size() > 0) {
+			logger.info("End search user by token.");
+
+			return users.get(0).getUserName();
+
+		} else {
+			logger.error("Search user by token ERROR");
+
+			return null;
+		}
 	}
 }

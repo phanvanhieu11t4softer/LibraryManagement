@@ -1,5 +1,6 @@
 package com.framgia.users.dao;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -30,4 +31,12 @@ public interface UserDao {
 	// update information user by from
 	boolean updateUser(Users uses);
 
+	// forgot password
+	Users updatePassword(Users user) throws ParseException;
+
+	// check pass
+	String findByPassword(int idUser, String password);
+
+	// check tojken of reset password
+	String findByToken(int idUser, String token);
 }
