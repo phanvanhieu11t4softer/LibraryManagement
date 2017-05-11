@@ -90,8 +90,15 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 				mUpdBorrowedDetails.setUserUpdate(bBorrowed.getUserUpdate());
 				updBookDetail = borrowedBookDao.updateBorrowedDetails(mUpdBorrowedDetails);
 
-				if (null != updBookDetail && (ConstantModel.BOR_STATUS_CANCEL.equals(mUpdBorrowed.getStatus())
-				        || ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus()))) {
+				if (null != updBookDetail && 
+					(ConstantModel.BOR_STATUS_CANCEL.equals(mUpdBorrowed.getStatus())
+						|| 
+						ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus()) 
+						|| 
+						(ConstantModel.BOR_STATUS_BORRWED.equals(mUpdBorrowed.getStatus()) 
+								&& ConstantModel.BOR_DET_STATUS_REJECT.equals(updBookDetail.getStatus()))
+					)) {
+					
 					flgUpdBoook = bookDao.update(updBookDetail.getBook());
 					if (!flgUpdBoook) {
 						break;
@@ -102,17 +109,19 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 			}
 
 			if (ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus())
-			        && mUpdBorrowed.getBorrowedDetails().size() == 0) {
-				System.out.println("size " + mBorroweds.getBorrowedDetails().size());
+				&& mUpdBorrowed.getBorrowedDetails().size() == 0) {
+
 				for (BorrowedDetails mUpdBorrowedDetails : mBorroweds.getBorrowedDetails()) {
-					Book mUpdBook = new Book();
-					mUpdBook.setUserUpdate(mUpdBorrowed.getUserUpdate());
-					mUpdBook.setBookId(mUpdBorrowedDetails.getBook().getBookId());
-
-					flgUpdBoook = bookDao.update(mUpdBook);
-
-					if (!flgUpdBoook) {
-						break;
+					if (ConstantModel.BOR_DET_STATUS_ACCEPT.equals(mUpdBorrowedDetails.getStatus())) {
+						Book mUpdBook = new Book();
+						mUpdBook.setUserUpdate(mUpdBorrowed.getUserUpdate());
+						mUpdBook.setBookId(mUpdBorrowedDetails.getBook().getBookId());
+	
+						flgUpdBoook = bookDao.update(mUpdBook);
+	
+						if (!flgUpdBoook) {
+							break;
+						}
 					}
 				}
 			}

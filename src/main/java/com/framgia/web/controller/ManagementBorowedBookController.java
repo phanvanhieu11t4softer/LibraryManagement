@@ -66,6 +66,8 @@ public class ManagementBorowedBookController {
 	// File input stream
 	private FileInputStream inputStream;
 
+	private String invalidUsername = "anonymousUser";
+
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(DateUtil.getSimpleDateFormat(), true));
@@ -171,6 +173,10 @@ public class ManagementBorowedBookController {
 	public String updatePage(@ModelAttribute("borrowedInfo") BorrowedInfo borrowedInfo, ModelMap model,
 			RedirectAttributes redirectAttributes) {
 		logger.info("call service: to update borrowed");
+
+		if (invalidUsername.equals(getUserName())) {
+			return "redirect:/login";
+		}
 
 		borrowedInfo.setUserUpdate(getUserName());
 
