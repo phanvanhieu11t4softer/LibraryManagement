@@ -1,6 +1,5 @@
 package com.framgia.users.service;
 
-import java.text.ParseException;
 import java.util.List;
 
 import com.framgia.users.bean.PermissionInfo;
@@ -32,5 +31,5 @@ public interface ManagementUsersService {
 	UserInfo findByIdUser(int idUser);
 
 	// update information user by from
-	UserInfo updateUser(UserInfo uses) throws ParseException;
+	boolean updateUser(UserInfo uses);
 }
