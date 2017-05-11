@@ -1,9 +1,12 @@
 package com.framgia.config;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.VelocityException;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,6 +24,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.ui.velocity.VelocityEngineFactory;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -171,5 +175,19 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
 		mailSender.setJavaMailProperties(javaMailProperties);
 		return mailSender;
+	}
+	
+	/*
+	 * Velocity configuration.
+	 */
+	@Bean
+	public VelocityEngine getVelocityEngine() throws VelocityException, IOException {
+		VelocityEngineFactory factory = new VelocityEngineFactory();
+		Properties props = new Properties();
+		props.put("resource.loader", "class");
+		props.put("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+
+		factory.setVelocityProperties(props);
+		return factory.createVelocityEngine();
 	}
 }
