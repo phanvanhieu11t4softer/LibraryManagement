@@ -1,7 +1,6 @@
 var formatDate = 'yy-mm-dd';
 var minDate = new Date('2010-01-01');
 var maxDate = '-0d';
-var status_cancel = '1';
 
 $("#txtIntenDateBor").datepicker({
 	dateFormat : formatDate,
@@ -176,6 +175,12 @@ $("#btn_download").click(function() {
 });
 
 // update
+var status_wait = '1';
+var status_approve = '2';
+var status_cancel = '3';
+var status_borrowed = '4';
+var status_finish = '5';
+
 function clickBtnEdit() {
 	$("#editbtn").addClass('hidden_elem');
 	$("#savebtn").removeClass('hidden_elem');
@@ -198,19 +203,19 @@ function clickBtnCancel() {
 	$('#messageContainer').html("");
 }
 $("#status" ).change(function () {
-	if ($("#status option:selected").val() == '2') {
+	if ($("#status option:selected").val() == status_approve) {
 		$("#dateBorrrowed").prop('disabled', true);
 		$("#dateArrived").prop('disabled', true);
 		$("#dateBorrrowed").val("");
 		$("#dateArrived").val("");
-	} else if ($("#status option:selected").val() == '3') {
+	} else if ($("#status option:selected").val() == status_cancel) {
 		$("#dateBorrrowed").prop('disabled', true);
 		$("#dateArrived").prop('disabled', true);
 		$("#dateBorrrowed").val("");
 		$("#dateArrived").val("");
 		$("#savebtn").prop('disabled', false);
 	}
-	else if ($("#status option:selected").val() == 4) {
+	else if ($("#status option:selected").val() == status_borrowed) {
 		$("#dateBorrrowed").prop('disabled', false);
 		$("#dateArrived").prop('disabled', true);
 		$("#dateArrived").val("");
@@ -230,7 +235,7 @@ $("#status" ).change(function () {
 
 		var flagChange = true;
 		$("#dataTables-result").find("select").each(function(){
-			if ($(this).find("option:selected").val() == status_cancel) {
+			if ($(this).find("option:selected").val() == status_wait) {
 				flagChange = false;
 				return;
 			}
@@ -246,19 +251,41 @@ $("#status" ).change(function () {
 })
 
 $("#dataTables-result").find("select").change(function () {
+	if ($("#status option:selected").val() != status_cancel &&
+			 $("#status option:selected").val() != status_approve) {
 
-	if ($("#status option:selected").val() != status_cancel) {
-
+		var flgWait = true;
 		$("#dataTables-result").find("select").each(function(){
 
-			if ($(this).find("option:selected").val() == status_cancel) {
-				$("#savebtn").prop('disabled', true);
+			if ($(this).find("option:selected").val() == status_wait) {
+				
+				var flgWait = false;
 				return;
 			}
-
-			$("#savebtn").prop('disabled', false);
 		})
-	}else {
+
+		if (flgWait && $("#status option:selected").val() != status_wait) {
+			$("#savebtn").prop('disabled', false);
+		} else {
+			$("#savebtn").prop('disabled', true);
+		}
+
+	} else if ($("#status option:selected").val() == status_approve) {
+		var flgApprove = false;
+		$("#dataTables-result").find("select").each(function(){
+			if ($(this).find("option:selected").text() != $(this).attr("data")) {
+				flgApprove = true;
+				return;
+			}
+		})
+
+		if (flgApprove) {
+			$("#savebtn").prop('disabled', false);
+		} else {
+			$("#savebtn").prop('disabled', true);
+		}
+	}
+	else {
 		$("#savebtn").prop('disabled', true);
 	}
 
@@ -275,9 +302,9 @@ $("#dateBorrrowed").datepicker({
 	onSelect: function(dateText) {
 		$("#dateArrived").datepicker( "option", "minDate", dateText || '0');
 		var start = $("#dateBorrrowed").datepicker("getDate");
-        var end = $("#dateArrived").datepicker("getDate");
-        var days = (end - start) / (1000 * 60 * 60 * 24);
-        difDate = days;
+		var end = $("#dateArrived").datepicker("getDate");
+		var days = (end - start) / (1000 * 60 * 60 * 24);
+		difDate = days;
 	}
 	
 });
@@ -287,65 +314,97 @@ $("#dateBorrrowed").change(function () {
 		$("#dateArrived").datepicker( "option", "minDate", minDate);
 	}
 	var start = $("#dateBorrrowed").datepicker("getDate");
-    var end = $("#dateArrived").datepicker("getDate");
-    var days = (end - start) / (1000 * 60 * 60 * 24);
-    difDate = days;
+	var end = $("#dateArrived").datepicker("getDate");
+	var days = (end - start) / (1000 * 60 * 60 * 24);
+	difDate = days;
 })
 
 $("#dateArrived").change(function () {
 	var start = $("#dateBorrrowed").datepicker("getDate");
-    var end = $("#dateArrived").datepicker("getDate");
-    var days = (end - start) / (1000 * 60 * 60 * 24);
-    difDate = days;
+	var end = $("#dateArrived").datepicker("getDate");
+	var days = (end - start) / (1000 * 60 * 60 * 24);
+	difDate = days;
 })
 $("#dateArrived").datepicker({
 	dateFormat : formatDate,
 	minDate : $("#dateBorrrowed").val(),
 	maxDate : maxDate,
-	onSelect: function(dateText) {
-        var start = $("#dateBorrrowed").datepicker("getDate");
-        var end = $("#dateArrived").datepicker("getDate");
-        var days = (end - start) / (1000 * 60 * 60 * 24);
-        difDate = days;
+	onSelect : function(dateText) {
+		var start = $("#dateBorrrowed").datepicker("getDate");
+		var end = $("#dateArrived").datepicker("getDate");
+		var days = (end - start) / (1000 * 60 * 60 * 24);
+		difDate = days;
 	}
 });
 
 $("#savebtn").click(function() {
-	if($("#dataTables-result").find("select option:selected").val() == '3') {
-		$("#status").val('3');
-	}
-	
-	if ($("#status option:selected").val() == '3') {
-		$("#dataTables-result").find("select").val('3');
-	}
 
-	var defaultData = $("#status").attr("data");
+	var flagWait = false;
 	
-	if(defaultData == "Request" && 
-			$("#status option:selected").val()== "5") {
-		if ($("#dateBorrrowed").val() == '' || $("#dateArrived").val() == '' || difDate < 0) {
+	$("#dataTables-result").find("select").each(function(){
+		if ($(this).find("option:selected").val() == status_wait) {
+			flagWait = true
+
+			return;
+		}
+	})
+
+	if (flagWait) {
+
+		// Change status of borrowed detail = cancel if status of borrowed = cancel
+		if ($("#status option:selected").val() == status_cancel) {
+			$("#dataTables-result").find("select").val(status_cancel);
+			$("#updateForm").submit();
+		} else {
 			$('#messageContainer').html($("#mgsCheckUpd").text());
+			$("#savebtn").prop('disabled', true);
+		}
+
+	} else {
+
+		var flagCancel = true;
+
+		// change status borrowed = cancel if find one status of borrowed = accept
+		$("#dataTables-result").find("select").each(function(){
+			if ($(this).find("option:selected").val() != status_cancel) {
+				flagCancel = false;
+				return;
+			}
+		})
+		if (flagCancel) {
+			$("#status").val('3');
+			$("#updateForm").submit();
+		}
+
+		// Check invalid data
+		var defaultData = $("#status").attr("data");
+		
+		if(defaultData == "Request" && 
+				$("#status option:selected").val()== status_finish) {
+			if ($("#dateBorrrowed").val() == '' || $("#dateArrived").val() == '' || difDate < 0) {
+				$('#messageContainer').html($("#mgsCheckUpd").text());
+			}
+			else {
+				$("#updateForm").submit();
+			}
+		}
+		else if ($("#status option:selected").val()== status_borrowed) {
+			if ($("#dateBorrrowed").val() == '') {
+				$('#messageContainer').html($("#mgsCheckUpd").text());
+			}
+			else{
+				$("#updateForm").submit();
+			}
+		}
+		else if ($("#status option:selected").val()== status_finish) {
+			if ($("#dateArrived").val() == '') {
+				$('#messageContainer').html($("#mgsCheckUpd").text());
+			}else {
+				$("#updateForm").submit();
+			}
 		}
 		else {
 			$("#updateForm").submit();
 		}
-	}
-	else if ($("#status option:selected").val()== "4") {
-		if ($("#dateBorrrowed").val() == '') {
-			$('#messageContainer').html($("#mgsCheckUpd").text());
-		}
-		else{
-			$("#updateForm").submit();
-		}
-	}
-	else if ($("#status option:selected").val()== "5") {
-		if ($("#dateArrived").val() == '') {
-			$('#messageContainer').html($("#mgsCheckUpd").text());
-		}else {
-			$("#updateForm").submit();
-		}		
-	}
-	else {
-		$("#updateForm").submit();
 	}
 })
