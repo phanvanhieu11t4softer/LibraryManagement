@@ -40,7 +40,6 @@ import com.framgia.users.service.MailService;
 import com.framgia.users.service.ManagementBorrowedBookService;
 import com.framgia.util.ConditionSearchBorrowed;
 import com.framgia.util.Constant;
-import com.framgia.util.ConvertDataModelAndBean;
 import com.framgia.util.CsvFileWriter;
 import com.framgia.util.DateUtil;
 
@@ -187,10 +186,7 @@ public class ManagementBorowedBookController {
 		if (null != updBorroweds) {
 			redirectAttributes.addFlashAttribute("messageUpd",
 				messageSource.getMessage("update_success", null, Locale.getDefault()));
-			if (ConvertDataModelAndBean.borr_status_approve.equals(updBorroweds.getStatus())
-				|| ConvertDataModelAndBean.borr_status_cancel.equals(updBorroweds.getStatus())) {
-				mailService.sendEmail(updBorroweds);
-			}
+				mailService.sendEmailBorrowed(updBorroweds);
 
 		} else {
 			redirectAttributes.addFlashAttribute("messageUpd",
