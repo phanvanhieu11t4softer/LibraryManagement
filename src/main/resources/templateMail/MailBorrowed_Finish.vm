@@ -1,0 +1,14 @@
+<html>
+	<body>
+		<h3>Dear ${borrowedInfo.userInfo.name},</h3>
+		<div>
+			<p>
+				We have send mail to notification for you that you <b>have completed the return books</b>.
+				<br/>
+				We hope that you have good knowledge from the books.
+				<br>
+				Honored to serve you.
+			</p>
+		</div>
+	</body>
+</html>

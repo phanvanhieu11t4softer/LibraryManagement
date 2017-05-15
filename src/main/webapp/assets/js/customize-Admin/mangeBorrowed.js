@@ -350,7 +350,6 @@ $("#savebtn").click(function() {
 	})
 
 	if (flagWait) {
-
 		// Change status of borrowed detail = cancel if status of borrowed = cancel
 		if ($("#status option:selected").val() == status_cancel) {
 			$("#dataTables-result").find("select").val(status_cancel);
@@ -362,18 +361,21 @@ $("#savebtn").click(function() {
 
 	} else {
 
-		var flagCancel = true;
-
-		// change status borrowed = cancel if find one status of borrowed = accept
-		$("#dataTables-result").find("select").each(function(){
-			if ($(this).find("option:selected").val() != status_cancel) {
-				flagCancel = false;
-				return;
+		if ($("#status").attr("data") == "Request"
+			|| $("#status").attr("data") == "Approve") {
+			var flagCancel = true;
+	
+			// change status borrowed = cancel if find one status of borrowed = accept
+			$("#dataTables-result").find("select").each(function(){
+				if ($(this).find("option:selected").val() != status_cancel) {
+					flagCancel = false;
+					return;
+				}
+			})
+			if (flagCancel) {
+				$("#status").val('3');
+				$("#updateForm").submit();
 			}
-		})
-		if (flagCancel) {
-			$("#status").val('3');
-			$("#updateForm").submit();
 		}
 
 		// Check invalid data

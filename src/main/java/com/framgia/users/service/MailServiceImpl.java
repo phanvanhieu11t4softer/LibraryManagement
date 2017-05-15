@@ -1,6 +1,7 @@
 package com.framgia.users.service;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
@@ -8,6 +9,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -36,14 +38,15 @@ public class MailServiceImpl implements MailService {
 	@Autowired
 	VelocityEngine velocityEngine;
 
-	private String subject = "Your Borrowed book: have been change status ";
+	@Autowired
+	MessageSource messageSource;
 
 	@Override
-	public void sendEmail(Object object) {
+	public void sendEmailBorrowed(Object object) {
 
 		BorrowedInfo borrowedInfo = (BorrowedInfo) object;
 
-		MimeMessagePreparator preparator = getMessagePreparator(borrowedInfo);
+		MimeMessagePreparator preparator = getMessagePreparatorChangeBorrowed(borrowedInfo);
 
 		try {
 			mailSender.send(preparator);
@@ -55,14 +58,15 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
-	private MimeMessagePreparator getMessagePreparator(final BorrowedInfo borrowedInfo) {
+	private MimeMessagePreparator getMessagePreparatorChangeBorrowed(final BorrowedInfo borrowedInfo) {
 
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 
 			public void prepare(MimeMessage mimeMessage) throws Exception {
 				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-				helper.setSubject(subject + borrowedInfo.getStatus());
+				helper.setSubject(messageSource.getMessage("subject_change_borrowed", null, Locale.getDefault())
+						+ borrowedInfo.getStatus());
 
 				helper.setTo(borrowedInfo.getUserInfo().getEmail());
 
@@ -70,12 +74,12 @@ public class MailServiceImpl implements MailService {
 				model.put("borrowedInfo", borrowedInfo);
 				String text = "";
 
-				if (borrowedInfo.getStatus().equals(ConvertDataModelAndBean.borr_status_approve)) {
-					text = getContent_Borrowed_Approve(model);
-				}
-
 				if (borrowedInfo.getStatus().equals(ConvertDataModelAndBean.borr_status_cancel)) {
-					text = getContent_Borrowed_CanCel(model);
+					text = getContentBorrowedCanCel(model);
+				} else if (borrowedInfo.getStatus().equals(ConvertDataModelAndBean.borr_status_finish)) {
+					text = getContentBorrowedFinish(model);
+				} else {
+					text = getContentBorrowedApprove(model);
 				}
 
 				logger.info("Body mail: " + text);
@@ -87,7 +91,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public String getContent_Borrowed_Approve(Map<String, Object> model) {
+	public String getContentBorrowedApprove(Map<String, Object> model) {
 		StringBuffer content = new StringBuffer();
 		try {
 			content.append(VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,
@@ -100,11 +104,24 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public String getContent_Borrowed_CanCel(Map<String, Object> model) {
+	public String getContentBorrowedCanCel(Map<String, Object> model) {
 		StringBuffer content = new StringBuffer();
 		try {
 			content.append(VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,
 			        "/templateMail/MailBorrowed_Cancel.vm", model));
+			return content.toString();
+		} catch (Exception e) {
+			logger.error("Error processing velocity template: " + e.getMessage());
+		}
+		return "";
+	}
+
+	@SuppressWarnings("deprecation")
+	public String getContentBorrowedFinish(Map<String, Object> model) {
+		StringBuffer content = new StringBuffer();
+		try {
+			content.append(VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,
+			        "/templateMail/MailBorrowed_Finish.vm", model));
 			return content.toString();
 		} catch (Exception e) {
 			logger.error("Error processing velocity template: " + e.getMessage());
