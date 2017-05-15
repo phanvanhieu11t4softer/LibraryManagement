@@ -161,7 +161,7 @@ public class Borroweds {
 		this.status = status;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "borroweds")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "borroweds")
 	public Set<BorrowedDetails> getBorrowedDetails() {
 		return borrowedDetailsList;
 	}

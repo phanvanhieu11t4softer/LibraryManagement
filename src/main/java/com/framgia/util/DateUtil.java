@@ -21,7 +21,7 @@ public class DateUtil {
 			return dateFormat.format(date);
 
 		} catch (Exception e) {
-			logger.error("Error convertDatetoString: " + e.getMessage());
+			logger.error("Error convertDatetoString: ", e);
 
 			return null;
 		}
@@ -33,7 +33,7 @@ public class DateUtil {
 			return dateFormat.format(date);
 
 		} catch (Exception e) {
-			logger.error("Error convertDateTimetoString: " + e.getMessage());
+			logger.error("Error convertDateTimetoString: ", e);
 
 			return null;
 		}
@@ -44,7 +44,7 @@ public class DateUtil {
 			SimpleDateFormat sdf = new SimpleDateFormat(date_format);
 			return sdf.parse(strDate);
 		} catch (Exception e) {
-			logger.error("Error convertStringtoDate: " + e.getMessage());
+			logger.error("Error convertStringtoDate: ", e);
 
 			return null;
 		}
@@ -57,7 +57,7 @@ public class DateUtil {
 			return convert;
 
 		} catch (Exception e) {
-			logger.error("Error convertStringtoDateTime: " + e.getMessage());
+			logger.error("Error convertStringtoDateTime: ", e);
 
 			return null;
 		}

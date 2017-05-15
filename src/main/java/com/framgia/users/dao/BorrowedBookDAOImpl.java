@@ -101,7 +101,7 @@ public class BorrowedBookDAOImpl extends AbstractDao<Integer, Borroweds> impleme
 			return queryList;
 
 		} catch (Exception e) {
-			logger.error("Search list borrowed error: " + e.getMessage());
+			logger.error("Search list borrowed error: ", e);
 
 			return null;
 		}
@@ -130,7 +130,7 @@ public class BorrowedBookDAOImpl extends AbstractDao<Integer, Borroweds> impleme
 			return borrowed;
 
 		} catch (Exception e) {
-			logger.error("Search find by id error: " + e.getMessage());
+			logger.error("Search find by id error: ", e);
 
 			return null;
 		}
@@ -138,6 +138,7 @@ public class BorrowedBookDAOImpl extends AbstractDao<Integer, Borroweds> impleme
 	@Override
 	public void update(Borroweds mBorrowed) {
 		getSession().saveOrUpdate(mBorrowed);
+
 	}
 
 	@Override

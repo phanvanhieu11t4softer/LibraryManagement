@@ -64,7 +64,7 @@ public class BorrowedDetails {
 		this.borrowedDetailId = borrowedDetailId;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "borrowedId", nullable = false)
 	public Borroweds getBorroweds() {
 		return borroweds;

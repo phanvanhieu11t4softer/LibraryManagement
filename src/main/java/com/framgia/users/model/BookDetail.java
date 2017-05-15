@@ -56,13 +56,13 @@ public class BookDetail {
 		return bookDetailId;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "bookId", nullable = false)
 	public Book getBook() {
 		return book;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "authorsId", nullable = false)
 	public Author getAuthor() {
 		return author;

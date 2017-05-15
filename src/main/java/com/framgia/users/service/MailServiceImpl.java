@@ -55,7 +55,7 @@ public class MailServiceImpl implements MailService {
 
 		} catch (MailException ex) {
 			ex.printStackTrace();
-			logger.error("Error send mail: " + ex.getMessage());
+			logger.error("Error send mail: ", ex);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class MailServiceImpl implements MailService {
 			        "/templateMail/MailBorrowed_Approve.vm", model));
 			return content.toString();
 		} catch (Exception e) {
-			logger.error("Error processing velocity template: " + e.getMessage());
+			logger.error("Error processing velocity template: ", e);
 		}
 		return "";
 	}
@@ -112,7 +112,7 @@ public class MailServiceImpl implements MailService {
 			        "/templateMail/MailBorrowed_Cancel.vm", model));
 			return content.toString();
 		} catch (Exception e) {
-			logger.error("Error processing velocity template: " + e.getMessage());
+			logger.error("Error processing velocity template: ", e);
 		}
 		return "";
 	}
@@ -125,7 +125,7 @@ public class MailServiceImpl implements MailService {
 			        "/templateMail/MailBorrowed_Finish.vm", model));
 			return content.toString();
 		} catch (Exception e) {
-			logger.error("Error processing velocity template: " + e.getMessage());
+			logger.error("Error processing velocity template: ", e);
 		}
 		return "";
 	}

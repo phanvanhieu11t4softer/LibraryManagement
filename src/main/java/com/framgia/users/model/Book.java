@@ -84,13 +84,13 @@ public class Book {
 		return bookCode;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "categoriesId", nullable = false)
 	public Categories getCategories() {
 		return categories;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "publishersId", nullable = false)
 	public Publishers getPublishers() {
 		return publishers;

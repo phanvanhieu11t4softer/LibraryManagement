@@ -927,7 +927,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					bookDAO.insertBook(bookData);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Book: " + e.getMessage());
+				logger.error("Error Insert Book: ", e);
 
 				return 0;
 			}
@@ -961,7 +961,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					bookDetailDAO.insertBookDetail(bookDetailData);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert BookDetail: " + e.getMessage());
+				logger.error("Error Insert BookDetail: ", e);
 
 				return 0;
 			}
@@ -990,7 +990,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					categoryDAO.insertCategory(categories);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Categories: " + e.getMessage());
+				logger.error("Error Insert Categories: ", e);
 
 				return 0;
 			}
@@ -1024,7 +1024,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					authorDAO.insertAuthor(author);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Author: " + e.getMessage());
+				logger.error("Error Insert Author: ", e);
 
 				return 0;
 			}
@@ -1055,7 +1055,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					publishersDAO.insertPublisher(publishers);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Publisher: " + e.getMessage());
+				logger.error("Error Insert Publisher: ", e);
 
 				return 0;
 			}
@@ -1094,7 +1094,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					userDao.insertUser(users);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Users: " + e.getMessage());
+				logger.error("Error Insert Users: ", e);
 
 				return 0;
 			}
@@ -1123,7 +1123,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 					permissionDao.insertPermission(permissions);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Permissions: " + e.getMessage());
+				logger.error("Error Insert Permissions: ", e);
 
 				return 0;
 			}

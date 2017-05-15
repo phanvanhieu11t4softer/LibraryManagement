@@ -92,7 +92,7 @@ public class CsvFileWriter {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in CsvFileWriter!\n Message: " + e.getMessage());
+			logger.error("Error in CsvFileWriter!\n Message: ", e);
 		} finally {
 			try {
 				fileWriter.flush();
@@ -100,7 +100,7 @@ public class CsvFileWriter {
 				csvFilePrinter.close();
 
 			} catch (IOException e) {
-				logger.error("Error while flushing/closing fileWriter/csvPrinter !\n Message: " + e.getMessage());
+				logger.error("Error while flushing/closing fileWriter/csvPrinter !\n Message: ", e);
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class CsvFileWriter {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in CsvFileWriter!\n Message: " + e.getMessage());
+			logger.error("Error in CsvFileWriter!\n Message: ", e);
 		} finally {
 			try {
 				fileWriter.flush();
@@ -158,7 +158,7 @@ public class CsvFileWriter {
 				csvFilePrinter.close();
 
 			} catch (IOException e) {
-				logger.error("Error while flushing/closing fileWriter/csvPrinter !\n Message: " + e.getMessage());
+				logger.error("Error while flushing/closing fileWriter/csvPrinter !\n Message: ", e);
 			}
 		}
 	}
@@ -172,7 +172,7 @@ public class CsvFileWriter {
 			IOUtils.copy(inputStream, outStream);
 		} catch (IOException e) {
 
-			logger.error("Error download csv: " + e.getMessage());
+			logger.error("Error download csv: ", e);
 		} finally {
 
 			try {
@@ -184,7 +184,7 @@ public class CsvFileWriter {
 					outStream.close();
 				}
 			} catch (IOException e) {
-				logger.error("Error download csv: " + e.getMessage());
+				logger.error("Error download csv: ", e);
 			}
 
 			// Delete file on server
