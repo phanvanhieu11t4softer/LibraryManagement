@@ -12,4 +12,10 @@ public interface CategoryDAO {
 
 	// Find CategoryId
 	public Categories findCategoryId(String categoryId);
+
+	// Find CategorCode
+	public Categories findCategoryCode(String categoryCode);
+
+	// Insert data into table Category
+	public void insertCategory(Categories categories);
 }

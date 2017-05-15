@@ -13,4 +13,10 @@ public interface BookDAO {
 	// Insert data into table Books
 	public void insertBook(Book book);
 
+	// Find by idBook
+	public Book findBookId(String bookId);
+	
+	boolean update(Book mBook);
+	
+
 }
