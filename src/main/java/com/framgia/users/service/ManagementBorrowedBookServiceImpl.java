@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.framgia.users.bean.BorrowedInfo;
 import com.framgia.users.dao.BookDao;
@@ -127,12 +126,9 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 			}
 
 			if (null != updBorroweds && flgUpdBorrowedsDetail && flgUpdBoook) {
-				TransactionAspectSupport.currentTransactionStatus().isCompleted();
 				return updBorroweds;
 			}
 		}
-
-		TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
 		return null;
 	}
 }
