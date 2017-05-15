@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.framgia.users.bean.PermissionInfo;
 import com.framgia.users.bean.UserInfo;
@@ -86,10 +85,6 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 		int result = 0;
 		if (userDao.delLogicUser(idUser, userUpd, DateUtil.convertStringtoDateTime(dateUpdate))) {
 			result = 1;
-			TransactionAspectSupport.currentTransactionStatus().isCompleted();
-
-		} else {
-			TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
 		}
 
 		return result;
@@ -117,14 +112,6 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 		Users userModel = new Users();
 		userModel = ConvertDataModelAndBean.converUserBeanToModel(user);
 
-		boolean flagUpd = userDao.updateUser(userModel);
-
-		if (flagUpd) {
-			TransactionAspectSupport.currentTransactionStatus().isCompleted();
-		} else {
-			TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
-		}
-
-		return flagUpd;
+		return userDao.updateUser(userModel);
 	}
 }

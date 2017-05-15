@@ -122,7 +122,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	 * Create a new HibernateTransactionManager instance.
 	 */
 	@Bean
-	public HibernateTransactionManager txManager() {
+	public HibernateTransactionManager transactionManager() {
 		return new HibernateTransactionManager(sessionFactory());
 	}
 
