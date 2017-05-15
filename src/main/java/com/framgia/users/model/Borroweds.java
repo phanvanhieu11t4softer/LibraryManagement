@@ -45,8 +45,8 @@ public class Borroweds {
 	}
 
 	public Borroweds(Integer borrowedId, Users user, String borrowedCode, Date dIntendBorrowed, Date dIntendArrived,
-			Date dateBorrrowed, Date dateArrived, String status, String deleteFlag, Date dateCreate,
-			String userCreate, Date dateUpdate, String userUpdate, Set<BorrowedDetails> borrowedDetailsList) {
+			Date dateBorrrowed, Date dateArrived, String status, String deleteFlag, Date dateCreate, String userCreate,
+			Date dateUpdate, String userUpdate, Set<BorrowedDetails> borrowedDetailsList) {
 		super();
 		this.borrowedId = borrowedId;
 		this.user = user;
@@ -65,8 +65,8 @@ public class Borroweds {
 	}
 
 	public Borroweds(Integer borrowedId, Users user, String borrowedCode, Date dIntendBorrowed, Date dIntendArrived,
-			Date dateBorrrowed, Date dateArrived, String status, String deleteFlag, Date dateCreate,
-			String userCreate, Date dateUpdate, String userUpdate) {
+			Date dateBorrrowed, Date dateArrived, String status, String deleteFlag, Date dateCreate, String userCreate,
+			Date dateUpdate, String userUpdate) {
 		super();
 		this.borrowedId = borrowedId;
 		this.user = user;
@@ -102,7 +102,7 @@ public class Borroweds {
 		this.borrowedCode = borrowedCode;
 	}
 
-	@OneToOne(targetEntity=Users.class,cascade=CascadeType.ALL)
+	@OneToOne(targetEntity = Users.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "userId", nullable = false)
 	public Users getUser() {
 		return user;
@@ -141,7 +141,7 @@ public class Borroweds {
 	public void setDateBorrrowed(Date dateBorrrowed) {
 		this.dateBorrrowed = dateBorrrowed;
 	}
-	
+
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dateArrived", nullable = true)
 	public Date getDateArrived() {
@@ -170,52 +170,51 @@ public class Borroweds {
 		this.borrowedDetailsList = borrowedDetailsList;
 	}
 
-
 	@Column(name = "deleteFlag", nullable = false, length = 1)
 	public String getDeleteFlag() {
 		return deleteFlag;
 	}
-	
+
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
 	}
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateCreate", nullable = false)
 	public Date getDateCreate() {
 		return dateCreate;
 	}
-	
+
 	public void setDateCreate(Date dateCreate) {
 		this.dateCreate = dateCreate;
 	}
-	
+
 	@Column(name = "userCreate", nullable = false, length = 30)
 	public String getUserCreate() {
 		return userCreate;
 	}
-	
+
 	public void setUserCreate(String userCreate) {
 		this.userCreate = userCreate;
 	}
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateUpdate", nullable = false)
 	public Date getDateUpdate() {
 		return dateUpdate;
 	}
-	
+
 	public void setDateUpdate(Date dateUpdate) {
 		this.dateUpdate = dateUpdate;
 	}
-	
+
 	@Column(name = "userUpdate", nullable = false, length = 30)
 	public String getUserUpdate() {
 		return userUpdate;
 	}
+
 	public void setUserUpdate(String userUpdate) {
 		this.userUpdate = userUpdate;
 	}
-
 
 }

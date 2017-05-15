@@ -98,8 +98,8 @@ public class Users implements java.io.Serializable {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
-
-	@ManyToOne(fetch = FetchType.EAGER)
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "permissionsId", nullable = false)
 	public Permissions getPermissions() {
 		return permissions;

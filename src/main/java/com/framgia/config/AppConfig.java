@@ -170,13 +170,14 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		Properties javaMailProperties = new Properties();
 		javaMailProperties.put(env.getProperty("mail.smtp.starttls"), "true");
 		javaMailProperties.put(env.getProperty("mail.smtp.auth"), "true");
-		javaMailProperties.put(env.getProperty("mail.transport.protocol"), env.getProperty("mail.transport.protocol.value"));
+		javaMailProperties.put(env.getProperty("mail.transport.protocol"),
+				env.getProperty("mail.transport.protocol.value"));
 		javaMailProperties.put(env.getProperty("mail.debug"), "true");
 
 		mailSender.setJavaMailProperties(javaMailProperties);
 		return mailSender;
 	}
-	
+
 	/*
 	 * Velocity configuration.
 	 */
