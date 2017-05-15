@@ -1,7 +1,7 @@
 package com.framgia.web.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -14,7 +14,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
@@ -64,9 +63,6 @@ public class ManagementUsersController {
 
 	@Autowired
 	MailService mailService;
-
-	// File input stream
-	private FileInputStream inputStream;;
 
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
@@ -153,47 +149,34 @@ public class ManagementUsersController {
 	        @RequestParam(value = "txtPermission") int txtPermission, ModelMap model) throws IOException {
 		logger.info("call service: download csv with condition search");
 
+		// get value
+		List<UserInfo> userInfo = managementUsersService.findByUsersWithCondition(txtName, txtPermission);
+
 		String FILE_PATH = System.getProperty("java.io.tmpdir");
 		String curTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"));
 		String filePath = FILE_PATH + "/" + Constant.NAME_REPORT_USER + curTime + Constant.EXTERNAL;
 
-		// get value
-		List<UserInfo> userInfo = managementUsersService.findByUsersWithCondition(txtName, txtPermission);
-
 		// Write CSV
-		CsvFileWriter.writeUsersCsv(filePath, userInfo);
+		try {
+			CsvFileWriter.writeUsersCsv(filePath, userInfo);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Error write csv: ", e);
+		}
 
 		File downloadFile = new File(filePath);
-		OutputStream outStream = null;
-		try {
-			inputStream = new FileInputStream(downloadFile);
 
-			response.setContentLength((int) downloadFile.length());
+		response.setContentLength((int) downloadFile.length());
 
-			// response header details
-			String headerKey = "Content-Disposition";
-			String fileName = URLEncoder.encode(downloadFile.getName(), "UTF-8");
-			response.setHeader(headerKey, "attachment; filename*=UTF-8''" + fileName);
+		// response header details
+		String headerKey = "Content-Disposition";
+		String fileName = URLEncoder.encode(downloadFile.getName(), "UTF-8");
+		response.setHeader(headerKey, "attachment; filename*=UTF-8''" + fileName);
 
-			// response
-			outStream = response.getOutputStream();
-			IOUtils.copy(inputStream, outStream);
+		// response
+		OutputStream outStream = response.getOutputStream();
 
-		} catch (Exception e) {
-			logger.error("Erro download csv: " + e.getMessage());
-		} finally {
-			try {
-				if (null != inputStream)
-					inputStream.close();
-				if (null != inputStream)
-					outStream.close();
-
-				// Delete file on server
-				downloadFile.delete();
-			} catch (IOException e) {
-				logger.error("Erro download csv: " + e.getMessage());
-			}
-		}
+		CsvFileWriter.deleteFileInServer(downloadFile, outStream);
 	}
 
 	public String getUserName() {
