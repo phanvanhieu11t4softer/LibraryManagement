@@ -20,7 +20,6 @@
 action="${pageContext.request.contextPath}/managementBorrowed/update"
 			 modelAttribute="borrowedInfo">
 	<form:input path="borrowedId" name="borrowedId" id="borrowedId" class="form-control hidden_elem"/>
-	<form:input path="dateUpdate" name="dateUpdate" id="dateUpdate" class="form-control hidden_elem"/>
 	<section class="bg_white clearfix">
 		<div class="body clearfix mt20 manageUser">
 			<div class="panel panel-default">

@@ -3,19 +3,21 @@ package com.framgia.users.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.framgia.users.bean.BorrowedInfo;
-import com.framgia.users.dao.BookDao;
-import com.framgia.users.dao.BorrowedBookDao;
+import com.framgia.users.dao.BorrowedBookDAO;
 import com.framgia.users.model.Book;
 import com.framgia.users.model.BorrowedDetails;
 import com.framgia.users.model.Borroweds;
 import com.framgia.users.model.ConstantModel;
 import com.framgia.util.ConditionSearchBorrowed;
 import com.framgia.util.ConvertDataModelAndBean;
+import com.framgia.util.DateUtil;
 
 /**
  * ManagementBorrowedBookServiceImpl.java
@@ -27,11 +29,11 @@ import com.framgia.util.ConvertDataModelAndBean;
 @Service("managementBorrowedBookService")
 public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBookService {
 
-	@Autowired
-	private BorrowedBookDao borrowedBookDao;
+	// log
+	private static final Logger logger = Logger.getLogger(ManagementBorrowedBookServiceImpl.class);
 
 	@Autowired
-	private BookDao bookDao;
+	private BorrowedBookDAO borrowedBookDao;
 
 	@Override
 	public List<BorrowedInfo> getBorrowedInfoByFindCondition(ConditionSearchBorrowed condition) {
@@ -69,66 +71,93 @@ public class ManagementBorrowedBookServiceImpl implements ManagementBorrowedBook
 	@Override
 	public BorrowedInfo update(BorrowedInfo bBorrowed) {
 
-		// Update Borrowed
-		Borroweds mUpdBorrowed = new Borroweds();
+		try {
+			Borroweds updBorrowed = new Borroweds();
 
-		mUpdBorrowed = ConvertDataModelAndBean.converBorrowedBeanToModel(bBorrowed);
+			updBorrowed = borrowedBookDao.findToUpdate(bBorrowed.getBorrowedId());
 
-		Borroweds mBorroweds = borrowedBookDao.update(mUpdBorrowed);
+			switch (bBorrowed.getStatus()) {
+			case ConstantModel.BOR_STATUS_APPROVE:
+				updBorrowed.setStatus(ConstantModel.BOR_STATUS_APPROVE);
+				break;
+			case ConstantModel.BOR_STATUS_CANCEL:
+				updBorrowed.setStatus(ConstantModel.BOR_STATUS_CANCEL);
 
-		if (mBorroweds != null) {
-			BorrowedInfo updBorroweds = ConvertDataModelAndBean.converBorrowedModelToBean(mBorroweds);
+				break;
+			case ConstantModel.BOR_STATUS_BORRWED:
+				updBorrowed.setStatus(ConstantModel.BOR_STATUS_BORRWED);
+				updBorrowed.setDateBorrrowed(DateUtil.convertStringtoDate(bBorrowed.getDateBorrrowed()));
+				break;
+			case ConstantModel.BOR_STATUS_FINISH:
+				updBorrowed.setStatus(ConstantModel.BOR_STATUS_FINISH);
 
-			// Update Borrowed Detail
-			boolean flgUpdBorrowedsDetail = true;
-			boolean flgUpdBoook = true;
-
-			BorrowedDetails updBookDetail = new BorrowedDetails();
-
-			for (BorrowedDetails mUpdBorrowedDetails : mUpdBorrowed.getBorrowedDetails()) {
-				mUpdBorrowedDetails.setUserUpdate(bBorrowed.getUserUpdate());
-				updBookDetail = borrowedBookDao.updateBorrowedDetails(mUpdBorrowedDetails);
-
-				if (null != updBookDetail && 
-					(ConstantModel.BOR_STATUS_CANCEL.equals(mUpdBorrowed.getStatus())
-						|| 
-						ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus()) 
-						|| 
-						(ConstantModel.BOR_STATUS_BORRWED.equals(mUpdBorrowed.getStatus()) 
-								&& ConstantModel.BOR_DET_STATUS_REJECT.equals(updBookDetail.getStatus()))
-					)) {
-					
-					flgUpdBoook = bookDao.update(updBookDetail.getBook());
-					if (!flgUpdBoook) {
-						break;
-					}
-				} else if (null == updBookDetail) {
-					flgUpdBorrowedsDetail = false;
+				if (StringUtils.isNotBlank(bBorrowed.getDateBorrrowed().toString())) {
+					updBorrowed.setDateBorrrowed(DateUtil.convertStringtoDate(bBorrowed.getDateBorrrowed()));
 				}
+
+				updBorrowed.setDateArrived(DateUtil.convertStringtoDate(bBorrowed.getDateArrived()));
+				break;
 			}
 
-			if (ConstantModel.BOR_STATUS_FINISH.equals(mUpdBorrowed.getStatus())
-				&& mUpdBorrowed.getBorrowedDetails().size() == 0) {
+			// borrowedBookDao.update(updBorrowed);
 
-				for (BorrowedDetails mUpdBorrowedDetails : mBorroweds.getBorrowedDetails()) {
-					if (ConstantModel.BOR_DET_STATUS_ACCEPT.equals(mUpdBorrowedDetails.getStatus())) {
-						Book mUpdBook = new Book();
-						mUpdBook.setUserUpdate(mUpdBorrowed.getUserUpdate());
-						mUpdBook.setBookId(mUpdBorrowedDetails.getBook().getBookId());
-	
-						flgUpdBoook = bookDao.update(mUpdBook);
-	
-						if (!flgUpdBoook) {
-							break;
+			// Update detail
+			if (updBorrowed.getBorrowedDetails() != null) {
+				int index = 0;
+				for (BorrowedDetails updateItemDetail : updBorrowed.getBorrowedDetails()) {
+
+					if (bBorrowed.getBorrowedDetail() != null
+						&& StringUtils.isNotBlank(bBorrowed.getBorrowedDetail().get(index).getStatus())) {
+						updateItemDetail.setUserUpdate(bBorrowed.getUserUpdate());
+						updateItemDetail.setDateUpdate(DateUtil.getDateNow());
+
+						updateItemDetail.setStatus(bBorrowed.getBorrowedDetail().get(index).getStatus());
+
+						// update book
+						if (updateItemDetail.getBook() != null && 
+								(ConstantModel.BOR_STATUS_CANCEL.equals(bBorrowed.getStatus())
+									|| ConstantModel.BOR_STATUS_FINISH.equals(bBorrowed.getStatus())
+									|| (ConstantModel.BOR_STATUS_BORRWED.equals(bBorrowed.getStatus())
+											&& ConstantModel.BOR_DET_STATUS_REJECT.equals(bBorrowed.getBorrowedDetail().get(index).getStatus())))) {
+							Book updBook = new Book();
+							updBook = updateItemDetail.getBook();
+
+							updBook.setUserUpdate(bBorrowed.getUserUpdate());
+							updBook.setDateUpdate(DateUtil.getDateNow());
+							updBook.setNumberRest(updBook.getNumberRest() + 1);
+							updBook.setNumberBorrowed(updBook.getNumberBorrowed() - 1);
+
+							updateItemDetail.setBook(updBook);
+						}
+						borrowedBookDao.updateBorrowedDetails(updateItemDetail);
+					} else {
+						if ((ConstantModel.BOR_STATUS_FINISH.equals(bBorrowed.getStatus())
+								&& ConstantModel.BOR_DET_STATUS_ACCEPT.equals(updateItemDetail.getStatus()))) {
+
+							// update book
+							Book updBook = new Book();
+							updBook = updateItemDetail.getBook();
+
+							updBook.setUserUpdate(bBorrowed.getUserUpdate());
+							updBook.setDateUpdate(DateUtil.getDateNow());
+							updBook.setNumberRest(updBook.getNumberRest() + 1);
+							updBook.setNumberBorrowed(updBook.getNumberBorrowed() - 1);
+
+							updateItemDetail.setBook(updBook);
+
+							borrowedBookDao.updateBorrowedDetails(updateItemDetail);
 						}
 					}
+					index++;
 				}
 			}
+			borrowedBookDao.update(updBorrowed);
 
-			if (null != updBorroweds && flgUpdBorrowedsDetail && flgUpdBoook) {
-				return updBorroweds;
-			}
+			return ConvertDataModelAndBean.converBorrowedModelToBean(updBorrowed);
+
+		} catch (Exception e) {
+			logger.error("Error update borrowed: ", e);
+			return null;
 		}
-		return null;
 	}
 }

@@ -25,7 +25,7 @@ public interface ManagementUsersService {
 	List<UserInfo> findByUsersWithCondition(String txtName, int txtPermission);
 
 	// delete logic user
-	int delLogicUser(int idUser, String userUpd, String dateUpdate);
+	int delLogicUser(int idUser, String userUpd);
 
 	// Search user with idUser
 	UserInfo findByIdUser(int idUser);
@@ -33,11 +33,9 @@ public interface ManagementUsersService {
 	// update information user by from
 	boolean updateUser(UserInfo uses);
 
+	// Reset password
 	UserInfo updateForgotPassword(String email);
 
-	String findByPassword(int idUser, String password);
-
-	String findByToken(int idUser, String token);
-
+	// update password
 	boolean updatePassword(int id, String token, String currencePass, String password);
 }

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
@@ -559,5 +560,10 @@ public final class Helpers {
 		return convFile;
 	}
 
+	public static String formatCurrency(Float price) {
+		java.text.NumberFormat format = java.text.NumberFormat.getCurrencyInstance(Locale.US);
+		
+		return format.format(price);
+	}
 }
 

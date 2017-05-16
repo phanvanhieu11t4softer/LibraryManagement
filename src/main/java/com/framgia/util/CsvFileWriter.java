@@ -52,36 +52,38 @@ public class CsvFileWriter {
 			// initialize CSVPrinter object
 			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
 
-			// Write a new borrowed object list to the CSV file
-			for (BorrowedInfo item : borrowedInfo) {
-				for (BorrowedDetailInfo borrowedDetail : item.getBorrowedDetail()) {
-					List<String> borrowedDataRecord = new ArrayList<String>();
+			if (!Helpers.isEmpty(borrowedInfo)) {
+				// Write a new borrowed object list to the CSV file
+				for (BorrowedInfo item : borrowedInfo) {
+					for (BorrowedDetailInfo borrowedDetail : item.getBorrowedDetail()) {
+						List<String> borrowedDataRecord = new ArrayList<String>();
 
-					// Add data
-					borrowedDataRecord.add(String.valueOf(item.getBorrowedId()));
-					borrowedDataRecord.add(item.getBorrowedCode());
+						// Add data
+						borrowedDataRecord.add(String.valueOf(item.getBorrowedId()));
+						borrowedDataRecord.add(item.getBorrowedCode());
 
-					borrowedDataRecord.add(item.getUserInfo().getUserName());
-					borrowedDataRecord.add(item.getUserInfo().getName());
-					borrowedDataRecord.add(item.getUserInfo().getEmail());
-					borrowedDataRecord.add(item.getUserInfo().getPhone());
-					borrowedDataRecord.add(item.getUserInfo().getSex());
+						borrowedDataRecord.add(item.getUserInfo().getUserName());
+						borrowedDataRecord.add(item.getUserInfo().getName());
+						borrowedDataRecord.add(item.getUserInfo().getEmail());
+						borrowedDataRecord.add(item.getUserInfo().getPhone());
+						borrowedDataRecord.add(item.getUserInfo().getSex());
 
-					borrowedDataRecord.add(item.getdIntendBorrowed());
-					borrowedDataRecord.add(item.getdIntendArrived());
-					borrowedDataRecord.add(item.getDateBorrrowed());
-					borrowedDataRecord.add(item.getDateArrived());
-					borrowedDataRecord.add(item.getStatus());
+						borrowedDataRecord.add(item.getdIntendBorrowed());
+						borrowedDataRecord.add(item.getdIntendArrived());
+						borrowedDataRecord.add(item.getDateBorrrowed());
+						borrowedDataRecord.add(item.getDateArrived());
+						borrowedDataRecord.add(item.getStatus());
 
-					borrowedDataRecord.add(borrowedDetail.getStatus());
-					borrowedDataRecord.add(borrowedDetail.getBookInfo().getBookCode());
-					borrowedDataRecord.add(borrowedDetail.getBookInfo().getName());
-					borrowedDataRecord.add(Helper.formatCurrency(borrowedDetail.getBookInfo().getPrice()));
-					borrowedDataRecord.add(String.valueOf(borrowedDetail.getBookInfo().getNumberPage()));
-					borrowedDataRecord.add(borrowedDetail.getBookInfo().getCategoriesName());
-					borrowedDataRecord.add(borrowedDetail.getBookInfo().getPublishersName());
+						borrowedDataRecord.add(borrowedDetail.getStatus());
+						borrowedDataRecord.add(borrowedDetail.getBookInfo().getBookCode());
+						borrowedDataRecord.add(borrowedDetail.getBookInfo().getName());
+						borrowedDataRecord.add(Helpers.formatCurrency(borrowedDetail.getBookInfo().getPrice()));
+						borrowedDataRecord.add(String.valueOf(borrowedDetail.getBookInfo().getNumberPage()));
+						borrowedDataRecord.add(borrowedDetail.getBookInfo().getCategoriesName());
+						borrowedDataRecord.add(borrowedDetail.getBookInfo().getPublishersName());
 
-					csvFilePrinter.printRecord(borrowedDataRecord);
+						csvFilePrinter.printRecord(borrowedDataRecord);
+					}
 				}
 			}
 
@@ -120,25 +122,27 @@ public class CsvFileWriter {
 			// initialize CSVPrinter object
 			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
 
-			// Write a new user object list to the CSV file
-			for (UserInfo item : userInfo) {
-				List<String> userDataRecord = new ArrayList<String>();
-				// Add data
-				userDataRecord.add(String.valueOf(item.getUserId()));
-				userDataRecord.add(item.getUserName());
-				userDataRecord.add(item.getPermissions().getPermissionName());
-				userDataRecord.add(item.getName());
-				userDataRecord.add(item.getEmail());
-				userDataRecord.add(item.getBirthDate());
-				userDataRecord.add(item.getAddress());
-				userDataRecord.add(item.getSex());
-				userDataRecord.add(item.getPhone());
-				userDataRecord.add(item.getUserCreate());
-				userDataRecord.add(item.getDateCreate());
-				userDataRecord.add(item.getUserUpdate());
-				userDataRecord.add(item.getDateUpdate());
+			if (!Helpers.isEmpty(userInfo)) {
+				// Write a new user object list to the CSV file
+				for (UserInfo item : userInfo) {
+					List<String> userDataRecord = new ArrayList<String>();
+					// Add data
+					userDataRecord.add(String.valueOf(item.getUserId()));
+					userDataRecord.add(item.getUserName());
+					userDataRecord.add(item.getPermissions().getPermissionName());
+					userDataRecord.add(item.getName());
+					userDataRecord.add(item.getEmail());
+					userDataRecord.add(item.getBirthDate());
+					userDataRecord.add(item.getAddress());
+					userDataRecord.add(item.getSex());
+					userDataRecord.add(item.getPhone());
+					userDataRecord.add(item.getUserCreate());
+					userDataRecord.add(item.getDateCreate());
+					userDataRecord.add(item.getUserUpdate());
+					userDataRecord.add(item.getDateUpdate());
 
-				csvFilePrinter.printRecord(userDataRecord);
+					csvFilePrinter.printRecord(userDataRecord);
+				}
 			}
 
 		} catch (Exception e) {

@@ -15,8 +15,5 @@ public interface BookDAO {
 
 	// Find by idBook
 	public Book findBookId(String bookId);
-	
-	boolean update(Book mBook);
-	
 
 }

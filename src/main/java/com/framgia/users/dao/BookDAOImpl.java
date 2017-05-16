@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.ScrollableResults;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.framgia.users.model.Book;
 import com.framgia.users.model.ConstantModel;
-import com.framgia.util.DateUtil;
 
 /**
  * BookDAOImpl.java
@@ -31,40 +27,6 @@ public class BookDAOImpl extends AbstractDao<Integer, Book> implements ConstantM
 		// Insert data into table Books
 		getOpenSession().saveOrUpdate(book);
 		logger.info("Insert success.");
-	}
-
-	@Override
-	public boolean update(Book mBook) {
-		try {
-
-			logger.info("Update book.");
-			
-			Criteria crit = getSession().createCriteria(Book.class);
-
-			crit.add(Restrictions.eq("bookId", mBook.getBookId()));
-
-			// Here is updated code
-			ScrollableResults items = crit.scroll();
-
-			while (items.next()) {
-				Book mUpdBook = (Book) items.get(0);
-
-				mUpdBook.setUserUpdate(mBook.getUserUpdate());
-				mUpdBook.setDateUpdate(DateUtil.getDateNow());
-				mUpdBook.setNumberRest(mUpdBook.getNumberRest() + 1);
-				mUpdBook.setNumberBorrowed(mUpdBook.getNumberBorrowed() - 1);
-				
-				getSession().saveOrUpdate(mUpdBook);
-				logger.info("Update end.");
-			}
-
-			return true;
-
-		} catch (Exception e) {
-			logger.error("Error update Book: " + e.getMessage());
-
-			return false;
-		}
 	}
 
 	@SuppressWarnings("unchecked")
