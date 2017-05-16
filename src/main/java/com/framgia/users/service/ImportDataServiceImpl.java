@@ -14,6 +14,8 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +26,17 @@ import com.framgia.users.dao.AuthorDAO;
 import com.framgia.users.dao.BookDAO;
 import com.framgia.users.dao.BookDetailDAO;
 import com.framgia.users.dao.CategoryDAO;
+import com.framgia.users.dao.PermissionDao;
 import com.framgia.users.dao.PublishersDAO;
+import com.framgia.users.dao.UserDao;
 import com.framgia.users.model.Author;
 import com.framgia.users.model.Book;
 import com.framgia.users.model.BookDetail;
 import com.framgia.users.model.Categories;
 import com.framgia.users.model.ConstantModel;
+import com.framgia.users.model.Permissions;
 import com.framgia.users.model.Publishers;
+import com.framgia.users.model.Users;
 import com.framgia.util.Constant;
 import com.framgia.util.DateUtil;
 import com.framgia.util.Helpers;
@@ -60,6 +66,12 @@ public class ImportDataServiceImpl implements ImportDataService {
 
 	@Autowired
 	private BookDetailDAO bookDetailDAO;
+
+	@Autowired
+	private PermissionDao permissionDao;
+
+	@Autowired
+	private UserDao userDao;
 
 	@Autowired
 	MessageSource messageSource;
@@ -175,6 +187,76 @@ public class ImportDataServiceImpl implements ImportDataService {
 					&& Constant.PHONE.equals(header[4]) && Constant.BIRTH_DAY.equals(header[5])
 					&& Constant.ADDRESS.equals(header[6]))) {
 
+				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
+			}
+			if (listData.size() == 0) {
+				return messageSource.getMessage("file_empty", null, Locale.getDefault())
+						.replace(Constant.DEFAULT_VALUE_MSG, fileUpload.getOriginalFilename());
+			}
+
+			// Table TABLE_PUBLISHERS
+		case Constant.TABLE_PUBLISHERS:
+			if (!Constant.NAME_FILE_DATA_PUBLISHERS.equals(fileUpload.getOriginalFilename())) {
+				return messageSource.getMessage("file_incorrect", null, Locale.getDefault());
+			}
+
+			// Next line Header
+			header = iterator.next();
+
+			// Check format header File
+			if (header.length != 4) {
+				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
+
+			} else if (!(Constant.PUBLISHERS_NAME.equals(header[0]) && Constant.PHONE.equals(header[1])
+					&& Constant.EMAIL.equals(header[2]) && Constant.ADDRESS.equals(header[3]))) {
+
+				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
+			}
+			if (listData.size() == 0) {
+				return messageSource.getMessage("file_empty", null, Locale.getDefault())
+						.replace(Constant.DEFAULT_VALUE_MSG, fileUpload.getOriginalFilename());
+			}
+
+			// Table TABLE_PUBLISHERS
+		case Constant.TABLE_USERS:
+			if (!Constant.NAME_FILE_DATA_USERS.equals(fileUpload.getOriginalFilename())) {
+				return messageSource.getMessage("file_incorrect", null, Locale.getDefault());
+			}
+
+			// Next line Header
+			header = iterator.next();
+
+			// Check format header File
+			if (header.length != 9) {
+				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
+
+			} else if (!(Constant.PERMISSIONS_ID.equals(header[0]) && Constant.USER_NAME.equals(header[1])
+					&& Constant.PASS_WORD.equals(header[2]) && Constant.BIRTH_DATE.equals(header[3])
+					&& Constant.NAME.equals(header[4]) && Constant.ADDRESS.equals(header[5])
+					&& Constant.PHONE.equals(header[6]) && Constant.SEX.equals(header[7])
+					&& Constant.EMAIL.equals(header[8]))) {
+
+				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
+			}
+			if (listData.size() == 0) {
+				return messageSource.getMessage("file_empty", null, Locale.getDefault())
+						.replace(Constant.DEFAULT_VALUE_MSG, fileUpload.getOriginalFilename());
+			}
+
+			// Table TABLE_PUBLISHERS
+		case Constant.TABLE_PERMISSIONS:
+			if (!Constant.NAME_FILE_DATA_PERMISSIONS.equals(fileUpload.getOriginalFilename())) {
+				return messageSource.getMessage("file_incorrect", null, Locale.getDefault());
+			}
+
+			// Next line Header
+			header = iterator.next();
+
+			// Check format header File
+			if (header.length != 2) {
+				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
+
+			} else if (!(Constant.PERMISSION_NAME.equals(header[0]) && Constant.DESCRIPTION.equals(header[1]))) {
 				return messageSource.getMessage("file_format_incorrect", null, Locale.getDefault());
 			}
 			if (listData.size() == 0) {
@@ -554,6 +636,233 @@ public class ImportDataServiceImpl implements ImportDataService {
 				line++;
 			}
 
+			// Table TABLE_PUBLISHERS
+		case Constant.TABLE_PUBLISHERS:
+			iterator.next();
+			while (iterator.hasNext()) {
+				String[] publishers = iterator.next();
+				if (publishers.length != 4) {
+					// Gen errorLog
+					errorLog = new ErrorInfo();
+
+					// Set data list listErrorLog
+					errorLog.setError(Constant.ERROR_LINE_FORMAT);
+					errorLog.setNumberLine(line);
+					listErrorLog.add(errorLog);
+				} else {
+					// Check null column PUBLISHERS_NAME
+					if (Helpers.checkNullColumn(publishers[0], Constant.PUBLISHERS_NAME, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(publishers[0], Constant.PUBLISHERS_NAME, line));
+					} else {
+						// Check maxlength column PUBLISHERS_NAME
+						if (Helpers.checkMaxLength(publishers[0], Constant.PUBLISHERS_NAME, line, 100) != null) {
+							listErrorLog
+									.add(Helpers.checkMaxLength(publishers[0], Constant.PUBLISHERS_NAME, line, 100));
+						}
+					}
+
+					// Check null column PUBLISHERS_NAME
+					if (Helpers.checkNullColumn(publishers[1], Constant.PHONE, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(publishers[1], Constant.PHONE, line));
+					} else {
+						// Check maxlength column PHONE
+						if (Helpers.checkMaxLength(publishers[1], Constant.PHONE, line, 11) != null) {
+							listErrorLog.add(Helpers.checkMaxLength(publishers[1], Constant.PUBLISHERS_NAME, line, 11));
+						}
+					}
+
+					// Check null column PUBLISHERS_NAME
+					if (Helpers.checkNullColumn(publishers[2], Constant.EMAIL, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(publishers[2], Constant.EMAIL, line));
+					} else {
+						// Check maxlength column EMAIL
+						if (Helpers.checkMaxLength(publishers[2], Constant.EMAIL, line, 30) != null) {
+							listErrorLog.add(Helpers.checkMaxLength(publishers[2], Constant.PUBLISHERS_NAME, line, 30));
+						}
+					}
+
+				}
+
+				line++;
+			}
+
+			// Table TABLE_USERS
+		case Constant.TABLE_USERS:
+			iterator.next();
+			while (iterator.hasNext()) {
+				String[] user = iterator.next();
+				if (user.length != 9) {
+					// Gen errorLog
+					errorLog = new ErrorInfo();
+
+					// Set data list listErrorLog
+					errorLog.setError(Constant.ERROR_LINE_FORMAT);
+					errorLog.setNumberLine(line);
+					listErrorLog.add(errorLog);
+				} else {
+					// Check null column PERMISSIONS_ID
+					if (Helpers.checkNullColumn(user[0], Constant.PERMISSIONS_ID, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[0], Constant.PERMISSIONS_ID, line));
+					} else {
+						// Check format Integer column PERMISSIONS_ID
+						if (Helpers.checkIntegerColumn(user[0], Constant.PERMISSIONS_ID, line) != null) {
+							listErrorLog.add(Helpers.checkIntegerColumn(user[0], Constant.PERMISSIONS_ID, line));
+						} else {
+							// Check key id PERMISSIONS_ID
+							if (permissionDao.findPermissionId(user[0]) == null) {
+
+								// Gen errorLog
+								errorLog = new ErrorInfo();
+
+								// Set data list listErrorLog
+								errorLog.setColumn(Constant.PERMISSIONS_ID);
+								errorLog.setError(
+										messageSource.getMessage("permission_id_not_exist", null, Locale.getDefault()));
+								errorLog.setNumberLine(line);
+								listErrorLog.add(errorLog);
+							}
+						}
+					}
+
+					// Check null column USER_NAME
+					if (Helpers.checkNullColumn(user[1], Constant.USER_NAME, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[1], Constant.USER_NAME, line));
+					} else {
+						// Check maxlength column USER_NAME
+						if (Helpers.checkMaxLength(user[1], Constant.USER_NAME, line, 30) != null) {
+							listErrorLog.add(Helpers.checkMaxLength(user[1], Constant.USER_NAME, line, 30));
+						} else {
+							// Check key id PERMISSIONS_ID
+							if (userDao.findUserName(user[1]) != null) {
+
+								// Gen errorLog
+								errorLog = new ErrorInfo();
+
+								// Set data list listErrorLog
+								errorLog.setColumn(Constant.USER_NAME);
+								errorLog.setError(
+										messageSource.getMessage("user_name_exist", null, Locale.getDefault()));
+								errorLog.setNumberLine(line);
+								listErrorLog.add(errorLog);
+							}
+						}
+					}
+
+					// Check null column PASS_WORD
+					if (Helpers.checkNullColumn(user[2], Constant.PASS_WORD, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[2], Constant.PASS_WORD, line));
+					}
+
+					// Check null column BIRTH_DATE
+					if (Helpers.checkNullColumn(user[3], Constant.BIRTH_DATE, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[3], Constant.BIRTH_DATE, line));
+					} else {
+						// Check format date column BIRTH_DATE
+						if (!Helpers.isDateValid(user[3])) {
+							// Gen errorLog
+							errorLog = new ErrorInfo();
+
+							// Set data list listErrorLog
+							errorLog.setColumn(Constant.BIRTH_DATE);
+							errorLog.setError(Constant.ERROR_DATE);
+							errorLog.setNumberLine(line);
+							listErrorLog.add(errorLog);
+						}
+					}
+
+					// Check null column NAME
+					if (Helpers.checkNullColumn(user[4], Constant.NAME, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[4], Constant.NAME, line));
+					} else {
+						// Check maxlength column USER_NAME
+						if (Helpers.checkMaxLength(user[4], Constant.NAME, line, 100) != null) {
+							listErrorLog.add(Helpers.checkMaxLength(user[4], Constant.NAME, line, 100));
+						}
+					}
+
+					// Check maxlength column ADDRESS
+					if (Helpers.checkMaxLength(user[5], Constant.ADDRESS, line, 100) != null) {
+						listErrorLog.add(Helpers.checkMaxLength(user[5], Constant.ADDRESS, line, 100));
+					}
+
+					// Check maxlength column PHONE
+					if (Helpers.checkMaxLength(user[6], Constant.PHONE, line, 11) != null) {
+						listErrorLog.add(Helpers.checkMaxLength(user[6], Constant.PHONE, line, 11));
+					}
+
+					// Check null column SEX
+					if (Helpers.checkNullColumn(user[7], Constant.SEX, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[7], Constant.SEX, line));
+					} else {
+						if (!Constant.DEFAULT_VALUE_0.equals(user[7]) && !Constant.DEFAULT_VALUE_1.equals(user[7])) {
+							// Gen errorLog
+							errorLog = new ErrorInfo();
+
+							// Set data list listErrorLog
+							errorLog.setColumn(Constant.SEX);
+							errorLog.setError(Constant.ERROR_CHAR01.replace(Constant.DEFAULT_VALUE_MSG, Constant.SEX));
+							errorLog.setNumberLine(line);
+							listErrorLog.add(errorLog);
+						}
+					}
+
+					// Check null column EMAIL
+					if (Helpers.checkNullColumn(user[8], Constant.EMAIL, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(user[8], Constant.EMAIL, line));
+					} else {
+						// Check maxlength column EMAIL
+						if (Helpers.checkMaxLength(user[8], Constant.EMAIL, line, 30) != null) {
+							listErrorLog.add(Helpers.checkMaxLength(user[8], Constant.EMAIL, line, 30));
+						}
+					}
+
+				}
+
+				line++;
+			}
+
+			// Table TABLE_PERMISSIONS
+		case Constant.TABLE_PERMISSIONS:
+			iterator.next();
+			while (iterator.hasNext()) {
+				String[] permissions = iterator.next();
+				if (permissions.length != 2) {
+					// Gen errorLog
+					errorLog = new ErrorInfo();
+
+					// Set data list listErrorLog
+					errorLog.setError(Constant.ERROR_LINE_FORMAT);
+					errorLog.setNumberLine(line);
+					listErrorLog.add(errorLog);
+				} else {
+					// Check null column PUBLISHERS_NAME
+					if (Helpers.checkNullColumn(permissions[0], Constant.PERMISSION_NAME, line) != null) {
+						listErrorLog.add(Helpers.checkNullColumn(permissions[0], Constant.PERMISSION_NAME, line));
+					}else{
+						// Check key PUBLISHERS_NAME
+						if (permissionDao.findPermissionName(permissions[0]) != null) {
+
+							// Gen errorLog
+							errorLog = new ErrorInfo();
+
+							// Set data list listErrorLog
+							errorLog.setColumn(Constant.PERMISSION_NAME);
+							errorLog.setError(
+									messageSource.getMessage("permission_name_exist", null, Locale.getDefault()));
+							errorLog.setNumberLine(line);
+							listErrorLog.add(errorLog);
+						}
+					}
+					// Check maxlength column PHONE
+					if (Helpers.checkMaxLength(permissions[1], Constant.DESCRIPTION, line, 100) != null) {
+						listErrorLog.add(Helpers.checkMaxLength(permissions[1], Constant.DESCRIPTION, line, 100));
+					}
+
+				}
+
+				line++;
+			}
+
 		}
 		return listErrorLog;
 	}
@@ -715,7 +1024,106 @@ public class ImportDataServiceImpl implements ImportDataService {
 					authorDAO.insertAuthor(author);
 				}
 			} catch (Exception e) {
-				logger.error("Error Insert Categories: " + e.getMessage());
+				logger.error("Error Insert Author: " + e.getMessage());
+
+				return 0;
+			}
+
+			// Table TABLE_PUBLISHERS
+		case Constant.TABLE_PUBLISHERS:
+
+			iterator.next();
+			Publishers publishers = null;
+			try {
+				while (iterator.hasNext()) {
+					String[] publisherData = iterator.next();
+
+					// Set data in bean Book
+					publishers = new Publishers();
+
+					publishers.setPublishersName(publisherData[0]);
+					publishers.setPhone(publisherData[1]);
+					publishers.setEmail(publisherData[2]);
+					publishers.setAddress(publisherData[3]);
+
+					publishers.setUserCreate(userName);
+					publishers.setUserUpdate(userName);
+					publishers.setDateCreate(dateCreate);
+					publishers.setDateUpdate(dateCreate);
+					publishers.setDeleteFlag(ConstantModel.DEL_FLG);
+
+					publishersDAO.insertPublisher(publishers);
+				}
+			} catch (Exception e) {
+				logger.error("Error Insert Publisher: " + e.getMessage());
+
+				return 0;
+			}
+
+			// Table TABLE_PUBLISHERS
+		case Constant.TABLE_USERS:
+
+			iterator.next();
+			Users users = null;
+			PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			try {
+				while (iterator.hasNext()) {
+					String[] userData = iterator.next();
+
+					// Set data in bean Book
+					users = new Users();
+
+					Permissions permissions = new Permissions();
+					permissions.setPermissionsId(Integer.parseInt(userData[0]));
+					users.setPermissions(permissions);
+
+					users.setUserName(userData[1]);
+					users.setPassWord(passwordEncoder.encode(userData[2]));
+					users.setBirthDate(Helpers.convertStringtoDate(userData[3]));
+					users.setName(userData[4]);
+					users.setAddress(userData[5]);
+					users.setPhone(userData[6]);
+					users.setSex(userData[7]);
+					users.setEmail(userData[8]);
+					users.setUserCreate(userName);
+					users.setUserUpdate(userName);
+					users.setDateCreate(dateCreate);
+					users.setDateUpdate(dateCreate);
+					users.setDeleteFlag(ConstantModel.DEL_FLG);
+
+					userDao.insertUser(users);
+				}
+			} catch (Exception e) {
+				logger.error("Error Insert Users: " + e.getMessage());
+
+				return 0;
+			}
+
+			// Table TABLE_PERMISSIONS
+		case Constant.TABLE_PERMISSIONS:
+
+			iterator.next();
+			Permissions permissions = null;
+			try {
+				while (iterator.hasNext()) {
+					String[] permissionData = iterator.next();
+
+					// Set data in bean Book
+					permissions = new Permissions();
+
+					permissions.setPermissionName(permissionData[0]);
+					permissions.setDescription(permissionData[1]);
+
+					permissions.setUserCreate(userName);
+					permissions.setUserUpdate(userName);
+					permissions.setDateCreate(dateCreate);
+					permissions.setDateUpdate(dateCreate);
+					permissions.setDeleteFlag(ConstantModel.DEL_FLG);
+
+					permissionDao.insertPermission(permissions);
+				}
+			} catch (Exception e) {
+				logger.error("Error Insert Permissions: " + e.getMessage());
 
 				return 0;
 			}

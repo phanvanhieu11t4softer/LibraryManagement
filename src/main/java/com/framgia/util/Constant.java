@@ -87,6 +87,12 @@ public class Constant {
 	// Name file insert table Publishers
 	public static final String NAME_FILE_DATA_PUBLISHERS = "Publishers.csv";
 
+	// Name file insert table Users
+	public static final String NAME_FILE_DATA_USERS = "Users.csv";
+
+	// Name file insert table Permissions
+	public static final String NAME_FILE_DATA_PERMISSIONS = "Permissions.csv";
+
 	// Column error file
 	public static final String ERROR_FILE = "The file is incorrect";
 
@@ -217,4 +223,20 @@ public class Constant {
 	public static final String DELETEED = "1";
 
 	public final static String USER_UPDATE_DEFAULT = "Admin";
+
+	// Column PermissionsId
+	public static final String PERMISSIONS_ID = "PermissionsId";
+
+	// Column UserName
+	public static final String USER_NAME = "UserName";
+
+	// Column PassWord
+	public static final String PASS_WORD = "PassWord";
+
+	// Column BirthDate
+	public static final String BIRTH_DATE = "BirthDate";
+
+	// Column PermissionName
+	public static final String PERMISSION_NAME = "PermissionName";
+
 }

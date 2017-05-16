@@ -12,4 +12,7 @@ public interface PublishersDAO {
 
 	// Find PublishersId
 	public Publishers findPublishersId(String id);
+
+	// Insert data into table Publishers
+	public void insertPublisher(Publishers publishers);
 }
