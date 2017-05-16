@@ -15,14 +15,15 @@ public class UserInfo {
 	private String userCreate;
 	private String dateUpdate;
 	private String userUpdate;
+	private String tokenResetPassword;
 	private PermissionInfo permissions;
 
 	public UserInfo() {
 	}
 
-	public UserInfo(int userId, String userName, String passWord, String birthDate,
-			String name, String address, String phone, String sex, String email, String deleteFlag, String dateCreate,
-			String userCreate, String dateUpdate, String userUpdate, PermissionInfo permissionsName) {
+	public UserInfo(int userId, String userName, String passWord, String birthDate, String name, String address,
+	        String phone, String sex, String email, String deleteFlag, String dateCreate, String userCreate,
+	        String dateUpdate, String userUpdate, PermissionInfo permissionsName) {
 		this.userId = userId;
 		this.userName = userName;
 		this.passWord = passWord;
@@ -150,6 +151,14 @@ public class UserInfo {
 
 	public void setUserUpdate(String userUpdate) {
 		this.userUpdate = userUpdate;
+	}
+
+	public String getTokenResetPassword() {
+		return tokenResetPassword;
+	}
+
+	public void setTokenResetPassword(String tokenResetPassword) {
+		this.tokenResetPassword = tokenResetPassword;
 	}
 
 	public PermissionInfo getPermissions() {

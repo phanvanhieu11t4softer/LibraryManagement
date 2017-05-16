@@ -78,6 +78,7 @@ public class ConvertDataModelAndBean {
 				bUser.setDateUpdate(mUser.getDateUpdate().toString().substring(0, 19));
 			}
 			bUser.setUserUpdate(mUser.getUserUpdate());
+			bUser.setTokenResetPassword(mUser.getTokenResetPassword());
 			PermissionInfo perInfo = new PermissionInfo();
 
 			perInfo.setPermissionName(mUser.getPermissions().getPermissionName());
@@ -112,6 +113,7 @@ public class ConvertDataModelAndBean {
 			userModel.setUserCreate(bUser.getUserCreate());
 			userModel.setPassWord(bUser.getPassWord());
 			userModel.setUserName(bUser.getUserName());
+			userModel.setTokenResetPassword(bUser.getTokenResetPassword());
 		}
 
 		return userModel;

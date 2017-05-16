@@ -41,6 +41,7 @@ public class Users implements java.io.Serializable {
 	private String userCreate;
 	private Date dateUpdate;
 	private String userUpdate;
+	private String tokenResetPassword;
 	private Permissions permissions;
 
 	public Users() {
@@ -49,7 +50,7 @@ public class Users implements java.io.Serializable {
 
 	public Users(Integer userId, String userName, String passWord, Date birthDate, String name, String address,
 			String phone, String sex, String email, String deleteFlag, Date dateCreate, String userCreate,
-			Date dateUpdate, String userUpdate) {
+			Date dateUpdate, String userUpdate, String tokenResetPassword) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -65,6 +66,7 @@ public class Users implements java.io.Serializable {
 		this.userCreate = userCreate;
 		this.dateUpdate = dateUpdate;
 		this.userUpdate = userUpdate;
+		this.tokenResetPassword = tokenResetPassword;
 	}
 
 	public Users(Integer userId, String userName, String passWord, Date birthDate, String name, String address,
@@ -227,6 +229,15 @@ public class Users implements java.io.Serializable {
 
 	public void setUserUpdate(String userUpdate) {
 		this.userUpdate = userUpdate;
+	}
+	
+	@Column(name = "tokenResetPassword", length = 100)
+	public String getTokenResetPassword() {
+		return tokenResetPassword;
+	}
+
+	public void setTokenResetPassword(String tokenResetPassword) {
+		this.tokenResetPassword = tokenResetPassword;
 	}
 
 }

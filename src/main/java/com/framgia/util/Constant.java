@@ -215,4 +215,6 @@ public class Constant {
 
 	// DeleteFlag not delete
 	public static final String DELETEED = "1";
+
+	public final static String USER_UPDATE_DEFAULT = "Admin";
 }

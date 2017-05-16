@@ -39,6 +39,5 @@ public interface ConstantModel {
 	public static String BOO_STATUS_GOOD = "1";
 
 	// Constant Status {2: Bad}
-	public static String BOO_STATUS_BAD = "2";
-
+	public static String BOO_STATUS_BAD = "2";	
 }
