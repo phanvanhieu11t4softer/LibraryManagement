@@ -1,5 +1,6 @@
 package com.framgia.users.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -7,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
+import com.framgia.users.model.Book;
 import com.framgia.users.model.ConstantModel;
 import com.framgia.users.model.Permissions;
 
@@ -40,5 +42,48 @@ public class PermissionDaoImpl extends AbstractDao<Integer, Permissions> impleme
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Permissions findPermissionId(String permissionId) {
+		List<Permissions> permissions = new ArrayList<Permissions>();
 
+		permissions = getOpenSession().createQuery("from Permissions where permissionsId=:permissionsId and deleteFlag=:delFlg")
+				.setParameter("permissionsId", Integer.parseInt(permissionId))
+				.setParameter("delFlg", ConstantModel.DEL_FLG).list();
+
+		if (permissions.size() > 0) {
+
+			return permissions.get(0);
+		} else {
+
+			return null;
+		}
+	}
+	
+	@Override
+	public void insertPermission(Permissions permissions) {
+		
+		// Insert data into table Books
+		getOpenSession().saveOrUpdate(permissions);
+		logger.info("Insert success.");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Permissions findPermissionName(String permissionName) {
+		List<Permissions> permissions = new ArrayList<Permissions>();
+
+		permissions = getOpenSession().createQuery("from Permissions where permissionName=:permissionName and deleteFlag=:delFlg")
+				.setParameter("permissionName", permissionName)
+				.setParameter("delFlg", ConstantModel.DEL_FLG).list();
+
+		if (permissions.size() > 0) {
+
+			return permissions.get(0);
+		} else {
+
+			return null;
+		}
+	}
 }

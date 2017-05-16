@@ -14,4 +14,13 @@ public interface PermissionDao {
 	
 	// Search permission with status enable
 	List<Permissions> findByDelFlg();
+
+	// Find PermissionID
+	Permissions findPermissionId(String permissionId);
+
+	// Insert data into table permissions
+	void insertPermission(Permissions permissions);
+
+	// find permissionName
+	Permissions findPermissionName(String permissionName);
 }

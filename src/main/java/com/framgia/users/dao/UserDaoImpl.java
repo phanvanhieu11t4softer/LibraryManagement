@@ -297,6 +297,32 @@ public class UserDaoImpl extends AbstractDao<Integer, Users> implements Constant
 
 		} else {
 			logger.error("Search user by token ERROR");
+			
+			return null;
+		}
+	}
+	
+	@Override
+	public void insertUser(Users users) {
+		
+		// Insert data into table Books
+		getOpenSession().saveOrUpdate(users);
+		logger.info("Insert success.");
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Users findUserName(String userName) {
+		List<Users> users = new ArrayList<Users>();
+
+		users = getOpenSession().createQuery("from Users where userName=:userName and deleteFlag=:delFlg")
+				.setParameter("userName", userName)
+				.setParameter("delFlg", ConstantModel.DEL_FLG).list();
+
+		if (users.size() > 0) {
+
+			return users.get(0);
+		} else {
 
 			return null;
 		}

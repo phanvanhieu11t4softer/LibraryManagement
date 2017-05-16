@@ -3,6 +3,7 @@ package com.framgia.users.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.framgia.users.model.ConstantModel;
@@ -16,6 +17,9 @@ import com.framgia.users.model.Publishers;
  */
 @Repository("publishersDAO")
 public class PublishersDAOImpl extends AbstractDao<Integer, Publishers> implements ConstantModel, PublishersDAO {
+
+	// log
+	private static final Logger logger = Logger.getLogger(PublishersDAOImpl.class);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -34,6 +38,14 @@ public class PublishersDAOImpl extends AbstractDao<Integer, Publishers> implemen
 			return null;
 		}
 
+	}	
+
+	@Override
+	public void insertPublisher(Publishers publishers) {
+
+		// Insert data into table Books
+		getOpenSession().saveOrUpdate(publishers);
+		logger.info("Insert success.");
 	}
 
 }

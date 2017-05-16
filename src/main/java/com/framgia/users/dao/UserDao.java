@@ -39,4 +39,10 @@ public interface UserDao {
 
 	// check tojken of reset password
 	String findByToken(int idUser, String token);
+
+	// Insert data into table Users
+	void insertUser(Users users);
+
+	// Search user name
+	Users findUserName(String username);
 }
