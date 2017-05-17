@@ -1,7 +1,7 @@
 package com.framgia.web.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -14,7 +14,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
@@ -64,9 +63,6 @@ public class ManagementBorowedBookController {
 	@Autowired
 	MailService mailService;
 
-	// File input stream
-	private FileInputStream inputStream;
-
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(DateUtil.getSimpleDateFormat(), true));
@@ -112,47 +108,35 @@ public class ManagementBorowedBookController {
 		ConditionSearchBorrowed condition = new ConditionSearchBorrowed(txtBorrowedCode, txtStatus, txtIntenDateBor,
 		        txtIntenDatePay, txtDateBor, txtDatePay);
 
+		// get value
+		List<BorrowedInfo> borrowedInfo = managementBorrowedBookService.getBorrowedInfoByFindCondition(condition);
+
 		String FILE_PATH = System.getProperty("java.io.tmpdir");
 		String curTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"));
 		String filePath = FILE_PATH + "/" + Constant.NAME_REPORT_BORROWED + curTime + Constant.EXTERNAL;
 
-		// get value
-		List<BorrowedInfo> borrowedInfo = managementBorrowedBookService.getBorrowedInfoByFindCondition(condition);
-
 		// Write CSV
-		CsvFileWriter.writeBorrowedCsv(filePath, borrowedInfo);
+		try {
+			CsvFileWriter.writeBorrowedCsv(filePath, borrowedInfo);
+
+		} catch (FileNotFoundException e) {
+			logger.error("Error write csv: ", e);
+		}
 
 		File downloadFile = new File(filePath);
-		OutputStream outStream = null;
-		try {
-			inputStream = new FileInputStream(downloadFile);
 
-			response.setContentLength((int) downloadFile.length());
+		response.setContentLength((int) downloadFile.length());
 
-			// response header details
-			String headerKey = "Content-Disposition";
-			String fileName = URLEncoder.encode(downloadFile.getName(), "UTF-8");
-			response.setHeader(headerKey, "attachment; filename*=UTF-8''" + fileName);
+		// response header details
+		String headerKey = "Content-Disposition";
+		String fileName = URLEncoder.encode(downloadFile.getName(), "UTF-8");
+		response.setHeader(headerKey, "attachment; filename*=UTF-8''" + fileName);
 
-			// response
-			outStream = response.getOutputStream();
-			IOUtils.copy(inputStream, outStream);
+		// response
+		OutputStream outStream = response.getOutputStream();
 
-		} catch (Exception e) {
-			logger.error("Erro download csv: " + e.getMessage());
-		} finally {
-			try {
-				if (null != inputStream)
-					inputStream.close();
-				if (null != inputStream)
-					outStream.close();
+		CsvFileWriter.deleteFileInServer(downloadFile, outStream);
 
-				// Delete file on server
-				downloadFile.delete();
-			} catch (IOException e) {
-				logger.error("Erro download csv: " + e.getMessage());
-			}
-		}
 	}
 
 	@RequestMapping(value = "/managementBorrowed/detail/{id}", method = RequestMethod.GET)
@@ -170,7 +154,7 @@ public class ManagementBorowedBookController {
 
 	@RequestMapping(value = "/managementBorrowed/update", method = RequestMethod.POST)
 	public String updatePage(@ModelAttribute("borrowedInfo") BorrowedInfo borrowedInfo, ModelMap model,
-			RedirectAttributes redirectAttributes) {
+	        RedirectAttributes redirectAttributes) {
 		logger.info("call service: to update borrowed");
 
 		if (null == getUserName()) {
@@ -185,12 +169,12 @@ public class ManagementBorowedBookController {
 
 		if (null != updBorroweds) {
 			redirectAttributes.addFlashAttribute("messageUpd",
-				messageSource.getMessage("update_success", null, Locale.getDefault()));
-				mailService.sendEmailBorrowed(updBorroweds);
+			        messageSource.getMessage("update_success", null, Locale.getDefault()));
+			mailService.sendEmailBorrowed(updBorroweds);
 
 		} else {
 			redirectAttributes.addFlashAttribute("messageUpd",
-				messageSource.getMessage("update_error", null, Locale.getDefault()));
+			        messageSource.getMessage("update_error", null, Locale.getDefault()));
 
 		}
 

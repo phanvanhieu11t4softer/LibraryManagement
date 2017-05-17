@@ -1,8 +1,11 @@
 package com.framgia.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.framgia.users.bean.BorrowedDetailInfo;
@@ -154,4 +158,34 @@ public class CsvFileWriter {
 			}
 		}
 	}
+
+	public static void deleteFileInServer(File downloadFile, OutputStream outStream) {
+		FileInputStream inputStream = null;
+
+		try {
+			// File input stream
+			inputStream = new FileInputStream(downloadFile);
+			IOUtils.copy(inputStream, outStream);
+		} catch (IOException e) {
+
+			logger.error("Error download csv: " + e.getMessage());
+		} finally {
+
+			try {
+				if (null != inputStream) {
+					inputStream.close();
+				}
+
+				if (null != outStream) {
+					outStream.close();
+				}
+			} catch (IOException e) {
+				logger.error("Error download csv: " + e.getMessage());
+			}
+
+			// Delete file on server
+			downloadFile.delete();
+		}
+	}
+
 }
