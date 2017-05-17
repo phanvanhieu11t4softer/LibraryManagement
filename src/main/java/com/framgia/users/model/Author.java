@@ -39,7 +39,7 @@ public class Author {
 	private Date dateUpdate;
 	private String userUpdate;
 	private Set<BookDetail> bookDetail = new HashSet<BookDetail>(0);
-	
+
 	public Author() {
 	}
 
@@ -65,7 +65,7 @@ public class Author {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-    @Column(name = "authorsId", unique = true, nullable = false)
+	@Column(name = "authorsId", unique = true, nullable = false)
 	public Integer getAuthorsId() {
 		return authorsId;
 	}
@@ -95,6 +95,7 @@ public class Author {
 		return phone;
 	}
 
+	@Temporal(TemporalType.DATE)
 	@Column(name = "birthday", nullable = true)
 	public Date getBirthday() {
 		return birthday;
@@ -104,12 +105,12 @@ public class Author {
 	public String getAddress() {
 		return address;
 	}
-	
+
 	@Column(name = "deleteFlag", nullable = false, length = 1)
 	public String getDeleteFlag() {
 		return deleteFlag;
 	}
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateCreate", nullable = false)
 	public Date getDateCreate() {
@@ -120,7 +121,7 @@ public class Author {
 	public String getUserCreate() {
 		return userCreate;
 	}
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateUpdate", nullable = false)
 	public Date getDateUpdate() {
@@ -192,5 +193,5 @@ public class Author {
 	public void setBookDetail(Set<BookDetail> bookDetail) {
 		this.bookDetail = bookDetail;
 	}
-	
+
 }

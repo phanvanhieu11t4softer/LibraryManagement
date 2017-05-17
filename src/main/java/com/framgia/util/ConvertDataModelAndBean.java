@@ -123,13 +123,16 @@ public class ConvertDataModelAndBean {
 	public static CategoryInfo converCategoryModelToBean(Categories mCategory) {
 
 		CategoryInfo bCategory = new CategoryInfo();
-
 		if (null != mCategory) {
-			bCategory.setCatSubId(mCategory.getCatSubId());
-			bCategory.setCategoriesCode(mCategory.getCategoriesCode());
+			bCategory.setCategoriesId(mCategory.getcategoriesId());
+			if (mCategory.getCatSubId() != null) {
+				bCategory.setCatSubId(mCategory.getCatSubId());
+			}
+			if (mCategory.getCategoriesCode() != null) {
+				bCategory.setCategoriesCode(mCategory.getCategoriesCode());
+			}
 			bCategory.setName(mCategory.getName());
 		}
-
 		return bCategory;
 	}
 
@@ -138,6 +141,7 @@ public class ConvertDataModelAndBean {
 		Categories mCategory = new Categories();
 
 		if (null != bCategory) {
+			mCategory.setcategoriesId(bCategory.getCategoriesId());
 			mCategory.setCatSubId(bCategory.getCatSubId());
 			mCategory.setCategoriesCode(bCategory.getCategoriesCode());
 			mCategory.setName(bCategory.getName());
@@ -152,6 +156,7 @@ public class ConvertDataModelAndBean {
 		PublisherInfo bPublisher = new PublisherInfo();
 
 		if (null != mPublishers) {
+			bPublisher.setPublishersId(mPublishers.getPublishersId());
 			bPublisher.setPublishersName(mPublishers.getPublishersName());
 			bPublisher.setPhone(mPublishers.getPhone());
 			bPublisher.setEmail(mPublishers.getEmail());
@@ -166,6 +171,7 @@ public class ConvertDataModelAndBean {
 		Publishers mPublisher = new Publishers();
 
 		if (null != bPublisher) {
+			mPublisher.setPublishersId(bPublisher.getPublishersId());
 			mPublisher.setPublishersName(bPublisher.getPublishersName());
 			mPublisher.setPhone(bPublisher.getPhone());
 			mPublisher.setEmail(bPublisher.getEmail());
@@ -224,9 +230,20 @@ public class ConvertDataModelAndBean {
 		if (null != mBookDetail) {
 			bBookDetail.setBookDetailId(mBookDetail.getBookDetailId());
 
-			if (null != mBookDetail.getAuthor()) {
-				bBookDetail.setAuthor(converAuthorModelToBean(mBookDetail.getAuthor()));
+			bBookDetail.setAuthorsName(mBookDetail.getAuthor().getAuthorsName());
+			bBookDetail.setSex(gender_male);
+
+			if (StringUtils.isNotBlank(mBookDetail.getAuthor().getSex())
+					&& mBookDetail.getAuthor().getSex().equals(gender_cd_fmale)) {
+				bBookDetail.setSex(gender_fmale);
 			}
+
+			bBookDetail.setEmail(mBookDetail.getAuthor().getEmail());
+			bBookDetail.setDescription(mBookDetail.getAuthor().getDescription());
+			bBookDetail.setPhone(mBookDetail.getAuthor().getPhone());
+			bBookDetail.setBirthday(mBookDetail.getAuthor().getBirthday().toString());
+			bBookDetail.setAddress(mBookDetail.getAuthor().getAddress());
+
 		}
 
 		return bBookDetail;
@@ -239,10 +256,14 @@ public class ConvertDataModelAndBean {
 
 		if (null != mBook) {
 			bBook.setBookId(mBook.getBookId());
+
+			// category
 			bBook.setCategoriesName(mBook.getCategories().getName());
 			bBook.setPublishersName(mBook.getPublishers().getPublishersName());
 			bBook.setCategoriesId(mBook.getCategories().getcategoriesId());
-
+			bBook.setPublishersAddress(mBook.getPublishers().getAddress());
+			bBook.setPublishersEmail(mBook.getPublishers().getEmail());
+			bBook.setPublishersPhone(mBook.getPublishers().getPhone());
 			bBook.setPublishersId(mBook.getPublishers().getPublishersId());
 			bBook.setBookCode(mBook.getBookCode());
 			bBook.setName(mBook.getName());
