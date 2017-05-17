@@ -10,7 +10,7 @@ import com.framgia.users.model.Permissions;
  * @version 19/04/2017
  * @author vu.thi.tran.van@framgia.com
  */
-public interface PermissionDao {
+public interface PermissionDAO {
 	
 	// Search permission with status enable
 	List<Permissions> findByDelFlg();

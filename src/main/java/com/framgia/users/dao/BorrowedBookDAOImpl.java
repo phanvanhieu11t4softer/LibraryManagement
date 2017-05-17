@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -16,7 +16,6 @@ import com.framgia.users.model.BorrowedDetails;
 import com.framgia.users.model.Borroweds;
 import com.framgia.users.model.ConstantModel;
 import com.framgia.util.ConditionSearchBorrowed;
-import com.framgia.util.DateUtil;
 
 /**
  * ManagementUsersController.java
@@ -25,10 +24,10 @@ import com.framgia.util.DateUtil;
  * @author vu.thi.tran.van@framgia.com
  */
 @Repository("borrowedBookDao")
-public class BorrowedBookDaoImpl extends AbstractDao<Integer, Borroweds> implements BorrowedBookDao {
+public class BorrowedBookDAOImpl extends AbstractDao<Integer, Borroweds> implements BorrowedBookDAO {
 
 	// log
-	private static final Logger logger = Logger.getLogger(BorrowedBookDaoImpl.class);
+	private static final Logger logger = Logger.getLogger(BorrowedBookDAOImpl.class);
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -136,95 +135,31 @@ public class BorrowedBookDaoImpl extends AbstractDao<Integer, Borroweds> impleme
 			return null;
 		}
 	}
-
-	@SuppressWarnings("unchecked")
 	@Override
-	public Borroweds update(Borroweds mBorrowed) {
-		logger.info("Update borroweds");
-
-		Borroweds mUpdBorrowed = new Borroweds();
-
-		try {
-			Criteria crit = getSession().createCriteria(Borroweds.class);
-
-			crit.add(Restrictions.eq("borrowedId", mBorrowed.getBorrowedId()));
-			crit.add(Restrictions.eq("dateUpdate", mBorrowed.getDateUpdate()));
-
-			List<Borroweds> items = crit.list();
-			mUpdBorrowed = (Borroweds) items.get(0);
-
-			switch (mBorrowed.getStatus()) {
-			case ConstantModel.BOR_STATUS_APPROVE:
-				mUpdBorrowed.setStatus(ConstantModel.BOR_STATUS_APPROVE);
-				break;
-			case ConstantModel.BOR_STATUS_CANCEL:
-				mUpdBorrowed.setStatus(ConstantModel.BOR_STATUS_CANCEL);
-
-				break;
-			case ConstantModel.BOR_STATUS_BORRWED:
-				mUpdBorrowed.setStatus(ConstantModel.BOR_STATUS_BORRWED);
-				mUpdBorrowed.setDateBorrrowed(mBorrowed.getDateBorrrowed());
-				break;
-			case ConstantModel.BOR_STATUS_FINISH:
-				mUpdBorrowed.setStatus(ConstantModel.BOR_STATUS_FINISH);
-
-				if (StringUtils.isNotEmpty(mBorrowed.getDateBorrrowed().toString())) {
-					mUpdBorrowed.setDateBorrrowed(mBorrowed.getDateBorrrowed());
-				}
-
-				mUpdBorrowed.setDateArrived(mBorrowed.getDateArrived());
-				break;
-			}
-
-			mUpdBorrowed.setUserUpdate(mBorrowed.getUserUpdate());
-			mUpdBorrowed.setDateUpdate(DateUtil.getDateNow());
-
-			getSession().saveOrUpdate(mUpdBorrowed);
-			logger.info("Update borrowed end.");
-
-			return mUpdBorrowed;
-
-		} catch (Exception e) {
-			logger.error("Update Borrowed error: " + e.getMessage());
-
-			return null;
-		}
+	public void update(Borroweds mBorrowed) {
+		getSession().saveOrUpdate(mBorrowed);
 	}
 
 	@Override
-	public BorrowedDetails updateBorrowedDetails(BorrowedDetails mBorrowedDetails) {
+	public void updateBorrowedDetails(BorrowedDetails mBorrowedDetails) {
 		logger.info("Update borrowed detail.");
-		BorrowedDetails mUpdBorrowed = new BorrowedDetails();
+		getSession().saveOrUpdate(mBorrowedDetails);
+	}
 
-		try {
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	@Override
+	public Borroweds findToUpdate(int borrowedId) {
+		logger.info("Search borrowed to update");
+		Criteria crit = getSession().createCriteria(Borroweds.class);
+		crit.add(Restrictions.eq("deleteFlag", ConstantModel.DEL_FLG));
+		crit.add(Restrictions.eq("borrowedId", borrowedId));
+		crit.setLockMode(LockMode.UPGRADE);
 
-			Criteria crit = getSession().createCriteria(BorrowedDetails.class);
+		List<Borroweds> items = crit.list();
 
-			crit.add(Restrictions.eq("borrowedDetailId", mBorrowedDetails.getBorrowedDetailId()));
-			crit.add(Restrictions.eq("dateUpdate", mBorrowedDetails.getDateUpdate()));
-
-			// Here is updated code
-			ScrollableResults items = crit.scroll();
-
-			while (items.next()) {
-
-				mUpdBorrowed = (BorrowedDetails) items.get(0);
-
-				mUpdBorrowed.setUserUpdate(mBorrowedDetails.getUserUpdate());
-				mUpdBorrowed.setDateUpdate(DateUtil.getDateNow());
-				mUpdBorrowed.setStatus(mBorrowedDetails.getStatus());
-
-				getSession().saveOrUpdate(mUpdBorrowed);
-			}
-			
-			logger.info("Update borrowed detail end.");
-			
-			return mUpdBorrowed;
-
-		} catch (Exception e) {
-			logger.error("Update borrowed detail error: " + e.getMessage());
-
-			return null;
+		if (items != null && items.size() > 0) {
+			return items.get(0);
 		}
+		return null;
 	}
 }

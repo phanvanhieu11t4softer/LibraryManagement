@@ -91,10 +91,10 @@ public class ManagementUsersController {
 
 	@RequestMapping(value = "/managementUsers/delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public int delLogicUser(@PathVariable("id") int idUser, @RequestParam(value = "dateUpd") String dateUpd) {
+	public int delLogicUser(@PathVariable("id") int idUser) {
 		logger.info("call service: delete user");
 
-		return managementUsersService.delLogicUser(idUser, getUserName(), dateUpd);
+		return managementUsersService.delLogicUser(idUser, getUserName());
 
 	}
 

@@ -38,7 +38,6 @@ $("#btn_seach").click(function(e) {
                                 "mRender" : function(data, type, row) {
                                 	var a = "aasa";
                                     return "<button onclick='clickBtnDel("+row.userId+",this)'>Del</button>"
-                                    + "<span class='hidden_elem' id='"+row.userId+"'>"+row.dateUpdate+"</span>"
                                     +"&nbsp;&nbsp;&nbsp;<a target='_blank' href='/SpringSecurity/managementUsers/detail/" + row.userId + "'>"
                                             + data+"</a>";
                                 },
@@ -95,15 +94,11 @@ function clickBtnDel(idUser, el) {
 	if (confirm("Are you sure delete record?") == true) {
 		$('#messageContainer').html('');
 		
-		var dateUpd = $("#"+idUser).text();
-		
 		var formURL = "/SpringSecurity/managementUsers/delete/" + idUser;
 		$.ajax({
 			url : formURL,
 			type : "GET",
-			data : {
-				dateUpd : dateUpd
-			},
+			data : false,
 			dataType : 'json',
 			success : function(data) {
 				if (data == 1) {

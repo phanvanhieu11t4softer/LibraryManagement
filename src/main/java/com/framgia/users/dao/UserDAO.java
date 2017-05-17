@@ -1,7 +1,5 @@
 package com.framgia.users.dao;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import com.framgia.users.model.Users;
@@ -14,7 +12,7 @@ import com.framgia.users.model.Users;
  * 
  *         Update: vu.thi.tran.van@framgia.com 17/04/2017
  */
-public interface UserDao {
+public interface UserDAO {
 
 	// Search user with function login _ HieuPV
 	Users findByUserName(String username);
@@ -22,27 +20,18 @@ public interface UserDao {
 	// Search user with input text search
 	List<Users> findByConditon(String txtName, int txtPermission);
 
-	// add user by from
-	boolean delLogicUser(int idUser, String userUpd, Date dateUpdate);
-
 	// search user find by id by from
 	Users findById(int idUser);
 
 	// update information user by from
-	boolean updateUser(Users uses);
-
-	// forgot password
-	Users updatePassword(Users user) throws ParseException;
-
-	// check pass
-	String findByPassword(int idUser, String password);
-
-	// check tojken of reset password
-	String findByToken(int idUser, String token);
+	void updateUser(Users uses);
 
 	// Insert data into table Users
 	void insertUser(Users users);
 
 	// Search user name
 	Users findUserName(String username);
+
+	// Get user for update
+	Users findToUpdate(int idUser, String email, String username, String password, String token);
 }

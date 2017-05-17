@@ -6,12 +6,14 @@ import com.framgia.users.model.BorrowedDetails;
 import com.framgia.users.model.Borroweds;
 import com.framgia.util.ConditionSearchBorrowed;
 
-public interface BorrowedBookDao {
+public interface BorrowedBookDAO {
 	List<Borroweds> findByCondition(ConditionSearchBorrowed condition);
 
 	Borroweds findByIdBorrowed(int idBorrowed);
 
-	Borroweds update(Borroweds mBorrowed);
+	void update(Borroweds mBorrowed);
 	
-	BorrowedDetails updateBorrowedDetails(BorrowedDetails mBorrowedDetails);
+	void updateBorrowedDetails(BorrowedDetails mBorrowedDetails);
+	
+	Borroweds findToUpdate(int borrowedId);
 }

@@ -26,9 +26,9 @@ import com.framgia.users.dao.AuthorDAO;
 import com.framgia.users.dao.BookDAO;
 import com.framgia.users.dao.BookDetailDAO;
 import com.framgia.users.dao.CategoryDAO;
-import com.framgia.users.dao.PermissionDao;
+import com.framgia.users.dao.PermissionDAO;
 import com.framgia.users.dao.PublishersDAO;
-import com.framgia.users.dao.UserDao;
+import com.framgia.users.dao.UserDAO;
 import com.framgia.users.model.Author;
 import com.framgia.users.model.Book;
 import com.framgia.users.model.BookDetail;
@@ -68,10 +68,10 @@ public class ImportDataServiceImpl implements ImportDataService {
 	private BookDetailDAO bookDetailDAO;
 
 	@Autowired
-	private PermissionDao permissionDao;
+	private PermissionDAO permissionDao;
 
 	@Autowired
-	private UserDao userDao;
+	private UserDAO userDao;
 
 	@Autowired
 	MessageSource messageSource;

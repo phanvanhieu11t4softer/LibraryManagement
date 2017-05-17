@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import com.framgia.users.model.Book;
 import com.framgia.users.model.ConstantModel;
 import com.framgia.users.model.Permissions;
 
@@ -19,10 +18,10 @@ import com.framgia.users.model.Permissions;
  * @author vu.thi.tran.van@framgia.com
  */
 @Repository("permissionDao")
-public class PermissionDaoImpl extends AbstractDao<Integer, Permissions> implements ConstantModel, PermissionDao {
+public class PermissionDAOImpl extends AbstractDao<Integer, Permissions> implements ConstantModel, PermissionDAO {
 
 	// log
-	private static final Logger logger = Logger.getLogger(PermissionDaoImpl.class);
+	private static final Logger logger = Logger.getLogger(PermissionDAOImpl.class);
 
 	@SuppressWarnings({ "unchecked" })
 	@Override

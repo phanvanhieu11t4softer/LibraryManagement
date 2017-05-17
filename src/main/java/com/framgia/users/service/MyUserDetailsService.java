@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.framgia.users.dao.UserDao;
+import com.framgia.users.dao.UserDAO;
 import com.framgia.users.model.Permissions;
 import com.framgia.users.model.Users;
 
@@ -29,7 +29,7 @@ import com.framgia.users.model.Users;
 public class MyUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UserDao userDao;
+	private UserDAO userDao;
 
 	@Transactional(readOnly = true)
 	@Override

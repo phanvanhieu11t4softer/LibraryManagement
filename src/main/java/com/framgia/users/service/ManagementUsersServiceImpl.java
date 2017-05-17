@@ -15,14 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.framgia.users.bean.PermissionInfo;
 import com.framgia.users.bean.UserInfo;
-import com.framgia.users.dao.PermissionDao;
-import com.framgia.users.dao.UserDao;
-import com.framgia.users.dao.UserDaoImpl;
+import com.framgia.users.dao.PermissionDAO;
+import com.framgia.users.dao.UserDAO;
+import com.framgia.users.model.ConstantModel;
 import com.framgia.users.model.Permissions;
 import com.framgia.users.model.Users;
 import com.framgia.util.Constant;
 import com.framgia.util.ConvertDataModelAndBean;
 import com.framgia.util.DateUtil;
+import com.framgia.util.Helpers;
 
 /**
  * ManagementUsersServiceImpl.java
@@ -35,13 +36,13 @@ import com.framgia.util.DateUtil;
 public class ManagementUsersServiceImpl implements ManagementUsersService {
 
 	// log
-	private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+	private static final Logger logger = Logger.getLogger(ManagementUsersServiceImpl.class);
 
 	@Autowired
-	private UserDao userDao;
+	private UserDAO userDao;
 
 	@Autowired
-	private PermissionDao permissionDao;
+	private PermissionDAO permissionDao;
 
 	@Override
 	public Users findByUserName(String username) {
@@ -53,20 +54,21 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 	public List<UserInfo> findByUsersWithCondition(String txtName, int txtPermission) {
 		// TODO Auto-generated method stub
 		List<Users> userList = userDao.findByConditon(txtName, txtPermission);
+		if (!Helpers.isEmpty(userList)) {
+			List<UserInfo> userInfo = new ArrayList<UserInfo>();
 
-		List<UserInfo> userInfo = new ArrayList<UserInfo>();
+			for (Users item : userList) {
 
-		for (Users item : userList) {
+				UserInfo user = new UserInfo();
 
-			UserInfo user = new UserInfo();
+				user = ConvertDataModelAndBean.converUserModelToBean(item);
 
-			user = ConvertDataModelAndBean.converUserModelToBean(item);
+				userInfo.add(user);
 
-			userInfo.add(user);
-
+			}
+			return userInfo;
 		}
-
-		return userInfo;
+		return null;
 	}
 
 	@Override
@@ -76,15 +78,16 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 		List<PermissionInfo> permissionInfo = new ArrayList<PermissionInfo>();
 
 		List<Permissions> permissionList = permissionDao.findByDelFlg();
+		if (!Helpers.isEmpty(permissionList)) {
+			for (Permissions item : permissionList) {
 
-		for (Permissions item : permissionList) {
+				PermissionInfo per = new PermissionInfo();
 
-			PermissionInfo per = new PermissionInfo();
+				per.setPermissionsId(item.getPermissionsId());
+				per.setPermissionName(item.getPermissionName());
 
-			per.setPermissionsId(item.getPermissionsId());
-			per.setPermissionName(item.getPermissionName());
-
-			permissionInfo.add(per);
+				permissionInfo.add(per);
+			}
 		}
 
 		return permissionInfo;
@@ -92,13 +95,25 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 
 	@Transactional
 	@Override
-	public int delLogicUser(int idUser, String userUpd, String dateUpdate) {
-		int result = 0;
-		if (userDao.delLogicUser(idUser, userUpd, DateUtil.convertStringtoDateTime(dateUpdate))) {
-			result = 1;
-		}
+	public int delLogicUser(int idUser, String userUpd) {
+		try {
+			Users updUser = userDao.findToUpdate(idUser, null, null, null, null);
 
-		return result;
+			if (updUser == null) {
+				return 0;
+			}
+			updUser.setUserName(null);
+			updUser.setDeleteFlag(ConstantModel.DEL_FLG_DEL);
+			updUser.setUserUpdate(userUpd);
+			updUser.setDateUpdate(DateUtil.getDateNow());
+
+			userDao.updateUser(updUser);
+			return 1;
+
+		} catch (Exception e) {
+			logger.error("Error delete logic: ", e);
+		}
+		return 0;
 	}
 
 	@Override
@@ -119,11 +134,55 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 	@Transactional
 	@Override
 	public boolean updateUser(UserInfo user) {
+		try {
 
-		Users userModel = new Users();
-		userModel = ConvertDataModelAndBean.converUserBeanToModel(user);
+			Users updUser = userDao.findToUpdate(user.getUserId(), null, null, null, null);
 
-		return userDao.updateUser(userModel);
+			if (updUser == null) {
+				return false;
+			}
+
+			if (StringUtils.isNotBlank(user.getName())) {
+				updUser.setName(user.getName());
+			}
+
+			if (0 < user.getPermissions().getPermissionsId()) {
+				Permissions per = new Permissions();
+				per.setPermissionsId(user.getPermissions().getPermissionsId());
+				updUser.setPermissions(per);
+			}
+
+			if (StringUtils.isNotBlank(user.getBirthDate())) {
+				updUser.setBirthDate(DateUtil.convertStringtoDate(user.getBirthDate()));
+			}
+
+			if (StringUtils.isNotBlank(user.getAddress())) {
+				updUser.setAddress(user.getAddress());
+			}
+
+			if (StringUtils.isNotBlank(user.getPhone())) {
+				updUser.setPhone(user.getPhone());
+			}
+
+			if (StringUtils.isNotBlank(user.getSex())) {
+				updUser.setSex(user.getSex());
+			}
+
+			if (StringUtils.isNotBlank(user.getEmail())) {
+				updUser.setEmail(user.getEmail());
+			}
+
+			updUser.setUserUpdate(user.getUserUpdate());
+
+			updUser.setDateUpdate(DateUtil.getDateNow());
+
+			userDao.updateUser(updUser);
+
+			return true;
+		} catch (ParseException e) {
+			logger.error("Error update logic: ", e);
+			return false;
+		}
 	}
 
 	@Transactional
@@ -131,26 +190,45 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 	public UserInfo updateForgotPassword(String email) {
 
 		try {
+			Users updUser = userDao.findToUpdate(0, email, null, null, null);
+
 			String token = UUID.randomUUID().toString();
 
 			String passwordConvert = passwordEncoderToString(token);
 
-			Users user = new Users();
+			updUser.setUserUpdate(updUser.getUserName());
+			updUser.setPassWord(passwordEncoderToString(passwordConvert));
+			updUser.setTokenResetPassword(token);
+			updUser.setUserUpdate(Constant.USER_UPDATE_DEFAULT);
+			updUser.setDateUpdate(DateUtil.getDateNow());
 
-			user.setPassWord(passwordConvert);
-			user.setEmail(email);
-			user.setTokenResetPassword(token);
-			user.setUserUpdate(Constant.USER_UPDATE_DEFAULT);
+			userDao.updateUser(updUser);
+			return ConvertDataModelAndBean.converUserModelToBean(updUser);
 
-			user = userDao.updatePassword(user);
-			if (null != user) {
-				return ConvertDataModelAndBean.converUserModelToBean(user);
-			}
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			logger.error("Error reset pass to email: ", e);
 			return null;
 		}
-		return null;
+	}
+
+	@Transactional
+	@Override
+	public boolean updatePassword(int id, String token, String currencePass, String password) {
+
+		try {
+			Users updUser = userDao.findToUpdate(id, null, null, currencePass, token);
+			updUser.setUserId(id);
+			updUser.setUserUpdate(updUser.getUserName());
+			updUser.setPassWord(passwordEncoderToString(password));
+			updUser.setTokenResetPassword(UUID.randomUUID().toString());
+			updUser.setDateUpdate(DateUtil.getDateNow());
+
+			userDao.updateUser(updUser);
+			return true;
+		} catch (ParseException e) {
+			logger.error("Error reset pass to form: ", e);
+			return false;
+		}
 	}
 
 	// encode password
@@ -160,44 +238,4 @@ public class ManagementUsersServiceImpl implements ManagementUsersService {
 		return hashedPassword;
 	}
 
-	@Override
-	public String findByPassword(int idUser, String password) {
-		return userDao.findByPassword(idUser, password);
-	}
-
-	@Override
-	public String findByToken(int idUser, String token) {
-		return userDao.findByToken(idUser, token);
-	}
-
-	@Transactional
-	@Override
-	public boolean updatePassword(int id, String token, String currencePass, String password) {
-
-		try {
-
-			String username;
-			if (StringUtils.isNotEmpty(token)) {
-				username = findByToken(id, token);
-			} else {
-				username = findByPassword(id, currencePass);
-			}
-
-			if (username != null) {
-				Users updUser = new Users();
-				updUser.setUserId(id);
-				updUser.setUserUpdate(username);
-				updUser.setPassWord(passwordEncoderToString(password));
-				updUser.setTokenResetPassword(UUID.randomUUID().toString());
-
-				if (userDao.updatePassword(updUser) != null) {
-					return true;
-				}
-			}
-		} catch (ParseException e) {
-			logger.error("Error reset pass to form: ", e);
-			return false;
-		}
-		return false;
-	}
 }
