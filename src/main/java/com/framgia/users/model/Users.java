@@ -101,7 +101,7 @@ public class Users implements java.io.Serializable {
 		this.userId = userId;
 	}
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "permissionsId", nullable = false)
 	public Permissions getPermissions() {
 		return permissions;

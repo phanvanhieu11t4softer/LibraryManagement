@@ -101,14 +101,20 @@ public class ConvertDataModelAndBean {
 			userModel.setUserId(bUser.getUserId());
 			userModel.setName(bUser.getName());
 			userModel.setPermissions(per);
-			userModel.setBirthDate(DateUtil.convertStringtoDate(bUser.getBirthDate()));
+			if (bUser.getBirthDate() != null && StringUtils.isNotEmpty(bUser.getBirthDate())) {
+				userModel.setBirthDate(DateUtil.convertStringtoDate(bUser.getBirthDate()));
+			}
 			userModel.setEmail(bUser.getEmail());
 			userModel.setPhone(bUser.getPhone());
 			userModel.setSex(bUser.getSex());
 			userModel.setAddress(bUser.getAddress());
 			userModel.setUserUpdate(bUser.getUserUpdate());
-			userModel.setDateUpdate(DateUtil.convertStringtoDateTime(bUser.getDateUpdate()));
-			userModel.setDateCreate(DateUtil.convertStringtoDateTime(bUser.getDateCreate()));
+			if (bUser.getDateUpdate() != null && StringUtils.isNotEmpty(bUser.getDateUpdate())) {
+				userModel.setDateUpdate(DateUtil.convertStringtoDateTime(bUser.getDateUpdate()));
+			}
+			if (bUser.getDateCreate() != null && StringUtils.isNotEmpty(bUser.getDateCreate())) {
+				userModel.setDateCreate(DateUtil.convertStringtoDateTime(bUser.getDateCreate()));
+			}
 			userModel.setDeleteFlag(bUser.getDeleteFlag());
 			userModel.setUserCreate(bUser.getUserCreate());
 			userModel.setPassWord(bUser.getPassWord());
@@ -191,7 +197,9 @@ public class ConvertDataModelAndBean {
 			bAuthor.setEmail(mAuthor.getEmail());
 			bAuthor.setDescription(mAuthor.getDescription());
 			bAuthor.setPhone(mAuthor.getPhone());
-			bAuthor.setBirthday(mAuthor.getBirthday().toString());
+			if (mAuthor.getBirthday() != null) {
+				bAuthor.setBirthday(mAuthor.getBirthday().toString());
+			}
 			bAuthor.setAddress(mAuthor.getAddress());
 		}
 
@@ -209,7 +217,9 @@ public class ConvertDataModelAndBean {
 			mAuthor.setEmail(bAuthor.getEmail());
 			mAuthor.setDescription(bAuthor.getDescription());
 			mAuthor.setPhone(bAuthor.getPhone());
-			mAuthor.setBirthday(DateUtil.convertStringtoDate(bAuthor.getBirthday()));
+			if (bAuthor.getBirthday() != null) {
+				mAuthor.setBirthday(DateUtil.convertStringtoDate(bAuthor.getBirthday()));
+			}
 			mAuthor.setAddress(bAuthor.getAddress());
 		}
 
@@ -285,8 +295,12 @@ public class ConvertDataModelAndBean {
 			mBook.setNumberPage(bBook.getNumberPage());
 			mBook.setDeleteFlag(bBook.getDeleteFlag());
 			mBook.setUserUpdate(bBook.getUserUpdate());
-			mBook.setDateUpdate(DateUtil.convertStringtoDateTime(bBook.getDateUpdate()));
-			mBook.setDateCreate(DateUtil.convertStringtoDateTime(bBook.getDateCreate()));
+			if (bBook.getDateUpdate() != null && StringUtils.isNotEmpty(bBook.getDateUpdate())) {
+				mBook.setDateUpdate(DateUtil.convertStringtoDateTime(bBook.getDateUpdate()));
+			}
+			if (bBook.getDateCreate() != null && StringUtils.isNotEmpty(bBook.getDateCreate())) {
+				mBook.setDateCreate(DateUtil.convertStringtoDateTime(bBook.getDateCreate()));
+			}
 			mBook.setDeleteFlag(bBook.getDeleteFlag());
 			mBook.setUserCreate(bBook.getUserCreate());
 		}
@@ -338,8 +352,13 @@ public class ConvertDataModelAndBean {
 				mBorDet.setBook(converBookBeanToModel(bBorDet.getBookInfo()));
 			}
 			mBorDet.setUserUpdate(bBorDet.getUserUpdate());
-			mBorDet.setDateUpdate(DateUtil.convertStringtoDateTime(bBorDet.getDateUpdate()));
-			mBorDet.setDateCreate(DateUtil.convertStringtoDateTime(bBorDet.getDateCreate()));
+
+			if (bBorDet.getDateUpdate() != null && StringUtils.isNotEmpty(bBorDet.getDateUpdate())) {
+				mBorDet.setDateUpdate(DateUtil.convertStringtoDateTime(bBorDet.getDateUpdate()));
+			}
+			if (bBorDet.getDateCreate() != null && StringUtils.isNotEmpty(bBorDet.getDateCreate())) {
+				mBorDet.setDateCreate(DateUtil.convertStringtoDateTime(bBorDet.getDateCreate()));
+			}
 			mBorDet.setDeleteFlag(bBorDet.getDeleteFlag());
 			mBorDet.setUserCreate(bBorDet.getUserCreate());
 		}
@@ -429,18 +448,32 @@ public class ConvertDataModelAndBean {
 				mBor.setUser(converUserBeanToModel(bBor.getUserInfo()));
 			}
 			mBor.setBorrowedCode(bBor.getBorrowedCode());
-			mBor.setDIntendBorrowed(DateUtil.convertStringtoDate(bBor.getdIntendBorrowed()));
-			mBor.setDIntendArrived(DateUtil.convertStringtoDate(bBor.getdIntendArrived()));
-			mBor.setDateBorrrowed(DateUtil.convertStringtoDate(bBor.getDateBorrrowed()));
-			mBor.setDateArrived(DateUtil.convertStringtoDate(bBor.getDateArrived()));
+			if (bBor.getdIntendBorrowed() != null && StringUtils.isNotEmpty(bBor.getdIntendBorrowed())) {
+				mBor.setDIntendBorrowed(DateUtil.convertStringtoDate(bBor.getdIntendBorrowed()));
+			}
+			if (bBor.getdIntendArrived() != null && StringUtils.isNotEmpty(bBor.getdIntendArrived())) {
+				mBor.setDIntendArrived(DateUtil.convertStringtoDate(bBor.getdIntendArrived()));
+			}
+			if (bBor.getDateBorrrowed() != null && StringUtils.isNotEmpty(bBor.getDateBorrrowed())) {
+				mBor.setDateBorrrowed(DateUtil.convertStringtoDate(bBor.getDateBorrrowed()));
+			}
+			if (bBor.getDateArrived() != null && StringUtils.isNotEmpty(bBor.getDateArrived())) {
+				mBor.setDateArrived(DateUtil.convertStringtoDate(bBor.getDateArrived()));
+			}
+
 			mBor.setStatus(bBor.getStatus());
 			mBor.setDeleteFlag(mBor.getDeleteFlag());
 			mBor.setUserCreate(bBor.getUserCreate());
 			mBor.setUserUpdate(bBor.getUserUpdate());
-			mBor.setDateUpdate(DateUtil.convertStringtoDateTime(bBor.getDateUpdate()));
-			mBor.setDateCreate(DateUtil.convertStringtoDateTime(bBor.getDateCreate()));
 
-			if (null != bBor.getBorrowedDetail()) {
+			if (bBor.getDateUpdate() != null && StringUtils.isNotEmpty(bBor.getDateUpdate())) {
+				mBor.setDateUpdate(DateUtil.convertStringtoDateTime(bBor.getDateUpdate()));
+			}
+			if (bBor.getDateCreate() != null && StringUtils.isNotEmpty(bBor.getDateCreate())) {
+				mBor.setDateCreate(DateUtil.convertStringtoDateTime(bBor.getDateCreate()));
+			}
+
+			if (null != bBor.getBorrowedDetail() && bBor.getBorrowedDetail().size() > 0) {
 				List<BorrowedDetails> borrowedDetail = new ArrayList<BorrowedDetails>();
 				for (BorrowedDetailInfo itemInfo : bBor.getBorrowedDetail()) {
 					BorrowedDetails mItem = new BorrowedDetails();

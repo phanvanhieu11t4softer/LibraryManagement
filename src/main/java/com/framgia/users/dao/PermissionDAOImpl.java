@@ -36,7 +36,7 @@ public class PermissionDAOImpl extends AbstractDao<Integer, Permissions> impleme
 
 			return query.list();
 		} catch (Exception e) {
-			logger.error("Error search list permission: " + e.getMessage());
+			logger.error("Error search list permission: ", e);
 
 			return null;
 		}

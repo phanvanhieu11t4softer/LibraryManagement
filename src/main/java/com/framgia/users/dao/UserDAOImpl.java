@@ -83,7 +83,7 @@ public class UserDAOImpl extends AbstractDao<Integer, Users> implements Constant
 			queryList = query.list();
 			logger.info("Search list user end.");
 		} catch (Exception e) {
-			logger.error("Error search list user: " + e.getMessage());
+			logger.error("Error search list user: ", e);
 		} finally {
 			return queryList;
 		}
@@ -114,7 +114,7 @@ public class UserDAOImpl extends AbstractDao<Integer, Users> implements Constant
 			logger.info("Search user by id end.");
 
 		} catch (Exception e) {
-			logger.error("Error search user by id: " + e.getMessage());
+			logger.error("Error search user by id: ", e);
 		} finally {
 			return user;
 		}

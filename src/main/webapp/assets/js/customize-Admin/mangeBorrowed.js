@@ -361,23 +361,6 @@ $("#savebtn").click(function() {
 
 	} else {
 
-		if ($("#status").attr("data") == "Request"
-			|| $("#status").attr("data") == "Approve") {
-			var flagCancel = true;
-	
-			// change status borrowed = cancel if find one status of borrowed = accept
-			$("#dataTables-result").find("select").each(function(){
-				if ($(this).find("option:selected").val() != status_cancel) {
-					flagCancel = false;
-					return;
-				}
-			})
-			if (flagCancel) {
-				$("#status").val('3');
-				$("#updateForm").submit();
-			}
-		}
-
 		// Check invalid data
 		var defaultData = $("#status").attr("data");
 		
@@ -406,6 +389,22 @@ $("#savebtn").click(function() {
 			}
 		}
 		else {
+			if ($("#status").attr("data") == "Request"
+				|| $("#status").attr("data") == "Approve") {
+				var flagCancel = true;
+		
+				// change status borrowed = cancel if find one status of borrowed = accept
+				$("#dataTables-result").find("select").each(function(){
+					if ($(this).find("option:selected").val() != status_cancel) {
+						flagCancel = false;
+						return;
+					}
+				})
+				if (flagCancel) {
+					$("#status").val('3');
+				}
+			}
+			
 			$("#updateForm").submit();
 		}
 	}

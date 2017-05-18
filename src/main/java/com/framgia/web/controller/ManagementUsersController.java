@@ -138,7 +138,7 @@ public class ManagementUsersController {
 				        messageSource.getMessage("update_error", null, Locale.getDefault()));
 			}
 		} catch (Exception e) {
-			logger.error("Error update user: " + e.getMessage());
+			logger.error("Error update user: ", e);
 		}
 
 		return "redirect:/managementUsers/detail/" + user.getUserId();

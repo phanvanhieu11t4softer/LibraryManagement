@@ -78,16 +78,16 @@ public class ManagementBorowedBookController {
 
 	@RequestMapping(value = "/managementBorrowed/search", method = RequestMethod.POST)
 	public @ResponseBody List<BorrowedInfo> findByCondition(
-	        @RequestParam(value = "txtBorrowedCode") String txtBorrowedCode,
-	        @RequestParam(value = "txtStatus") String txtStatus,
-	        @RequestParam(value = "txtIntenDateBor") String txtIntenDateBor,
-	        @RequestParam(value = "txtIntenDatePay") String txtIntenDatePay,
-	        @RequestParam(value = "txtDateBor") String txtDateBor,
-	        @RequestParam(value = "txtDatePay") String txtDatePay, ModelMap model) {
+			@RequestParam(value = "txtBorrowedCode") String txtBorrowedCode,
+			@RequestParam(value = "txtStatus") String txtStatus,
+			@RequestParam(value = "txtIntenDateBor") String txtIntenDateBor,
+			@RequestParam(value = "txtIntenDatePay") String txtIntenDatePay,
+			@RequestParam(value = "txtDateBor") String txtDateBor,
+			@RequestParam(value = "txtDatePay") String txtDatePay, ModelMap model) {
 		logger.info("call service: get list borrowed");
 
 		ConditionSearchBorrowed condition = new ConditionSearchBorrowed(txtBorrowedCode, txtStatus, txtIntenDateBor,
-		        txtIntenDatePay, txtDateBor, txtDatePay);
+				txtIntenDatePay, txtDateBor, txtDatePay);
 
 		// get value permission role for select box
 		List<BorrowedInfo> borrowedInfo = managementBorrowedBookService.getBorrowedInfoByFindCondition(condition);
@@ -97,16 +97,16 @@ public class ManagementBorowedBookController {
 
 	@RequestMapping(value = "managementBorrowed/downloadCSV", method = RequestMethod.POST)
 	public void downloadCondition(HttpServletResponse response,
-	        @RequestParam(value = "txtBorrowedCode") String txtBorrowedCode,
-	        @RequestParam(value = "txtStatus") String txtStatus,
-	        @RequestParam(value = "txtIntenDateBor") String txtIntenDateBor,
-	        @RequestParam(value = "txtIntenDatePay") String txtIntenDatePay,
-	        @RequestParam(value = "txtDateBor") String txtDateBor,
-	        @RequestParam(value = "txtDatePay") String txtDatePay, ModelMap model) throws IOException {
+			@RequestParam(value = "txtBorrowedCode") String txtBorrowedCode,
+			@RequestParam(value = "txtStatus") String txtStatus,
+			@RequestParam(value = "txtIntenDateBor") String txtIntenDateBor,
+			@RequestParam(value = "txtIntenDatePay") String txtIntenDatePay,
+			@RequestParam(value = "txtDateBor") String txtDateBor,
+			@RequestParam(value = "txtDatePay") String txtDatePay, ModelMap model) throws IOException {
 		logger.info("call service: download csv with condition search");
 
 		ConditionSearchBorrowed condition = new ConditionSearchBorrowed(txtBorrowedCode, txtStatus, txtIntenDateBor,
-		        txtIntenDatePay, txtDateBor, txtDatePay);
+				txtIntenDatePay, txtDateBor, txtDatePay);
 
 		// get value
 		List<BorrowedInfo> borrowedInfo = managementBorrowedBookService.getBorrowedInfoByFindCondition(condition);
@@ -154,7 +154,7 @@ public class ManagementBorowedBookController {
 
 	@RequestMapping(value = "/managementBorrowed/update", method = RequestMethod.POST)
 	public String updatePage(@ModelAttribute("borrowedInfo") BorrowedInfo borrowedInfo, ModelMap model,
-	        RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes) {
 		logger.info("call service: to update borrowed");
 
 		if (null == getUserName()) {
@@ -169,12 +169,12 @@ public class ManagementBorowedBookController {
 
 		if (null != updBorroweds) {
 			redirectAttributes.addFlashAttribute("messageUpd",
-			        messageSource.getMessage("update_success", null, Locale.getDefault()));
+					messageSource.getMessage("update_success", null, Locale.getDefault()));
 			mailService.sendEmailBorrowed(updBorroweds);
 
 		} else {
 			redirectAttributes.addFlashAttribute("messageUpd",
-			        messageSource.getMessage("update_error", null, Locale.getDefault()));
+					messageSource.getMessage("update_error", null, Locale.getDefault()));
 
 		}
 
