@@ -1,5 +1,7 @@
 package com.framgia.users.bean;
 
+import java.util.List;
+
 /**
  * BookInfo.java description infor data insert table Book
  * 
@@ -11,9 +13,9 @@ public class BookInfo {
 	private int bookId;
 	private String categoriesName;
 	private String publishersName;
-	private String bookCode;
 	private int categoriesId;
 	private int publishersId;
+	private String bookCode;
 	private String name;
 	private Float price;
 	private String statusBook;
@@ -26,6 +28,11 @@ public class BookInfo {
 	private String userCreate;
 	private String dateUpdate;
 	private String userUpdate;
+	private List<BookDetailInfo> bookDetail;
+	private String categoriesCode;
+	private String publishersPhone;
+	private String publishersEmail;
+	private String publishersAddress;
 
 	public BookInfo() {
 	}
@@ -172,6 +179,46 @@ public class BookInfo {
 
 	public void setUserUpdate(String userUpdate) {
 		this.userUpdate = userUpdate;
+	}
+
+	public List<BookDetailInfo> getBookDetail() {
+		return bookDetail;
+	}
+
+	public void setBookDetail(List<BookDetailInfo> bookDetail) {
+		this.bookDetail = bookDetail;
+	}
+
+	public String getCategoriesCode() {
+		return categoriesCode;
+	}
+
+	public void setCategoriesCode(String categoriesCode) {
+		this.categoriesCode = categoriesCode;
+	}
+
+	public String getPublishersPhone() {
+		return publishersPhone;
+	}
+
+	public void setPublishersPhone(String publishersPhone) {
+		this.publishersPhone = publishersPhone;
+	}
+
+	public String getPublishersEmail() {
+		return publishersEmail;
+	}
+
+	public void setPublishersEmail(String publishersEmail) {
+		this.publishersEmail = publishersEmail;
+	}
+
+	public String getPublishersAddress() {
+		return publishersAddress;
+	}
+
+	public void setPublishersAddress(String publishersAddress) {
+		this.publishersAddress = publishersAddress;
 	}
 
 }

@@ -16,6 +16,8 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import com.framgia.users.bean.BookDetailInfo;
+import com.framgia.users.bean.BookInfo;
 import com.framgia.users.bean.BorrowedDetailInfo;
 import com.framgia.users.bean.BorrowedInfo;
 import com.framgia.users.bean.UserInfo;
@@ -30,10 +32,15 @@ public class CsvFileWriter {
 
 	// CSV file header
 	public final static String HEADER_CSV_BORROWED = "Borrowed id, Borrowed code, Username, Fullname, Email, Phone number, Gender, Date intend borrowed, Date intend payment, Date borrowed, "
-	        + "Date payment, Status of borrowed, Status of book rent, Book code, Book name, Price, Page number, Category, Publisher";
+			+ "Date payment, Status of borrowed, Status of book rent, Book code, Book name, Price, Page number, Category, Publisher";
 
 	// header of file report of screen management users
 	public final static String HEADER_CSV_USER = "User id, Username, Permission, Full name, Email, Birthday, Address, Gender, Phone number, User create, Date create, User update, Date update";
+
+	// CSV file header
+	public final static String HEADER_CSV_BOOK = "Id, Book code, Book name, Price, Quanity, Quantity rent, Quantity borrowed, "
+			+ "Category code, Category name, Publisher name, Publisher phone, Publisher email, Publisher address, "
+			+ "Author name, Author gender, Author email, Author phone, Author Address, Author birthday";
 
 	@SuppressWarnings("resource")
 	public static void writeBorrowedCsv(String fileName, List<BorrowedInfo> borrowedInfo) throws FileNotFoundException {
@@ -42,7 +49,7 @@ public class CsvFileWriter {
 
 		// Create the CSVFormat object with "\n" as a record delimiter
 		CSVFormat csvFileFormatHeard = CSVFormat.newFormat(',').withHeader(HEADER_CSV_BORROWED)
-		        .withRecordSeparator(NEW_LINE_SEPARATOR);
+				.withRecordSeparator(NEW_LINE_SEPARATOR);
 
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
 
@@ -112,7 +119,7 @@ public class CsvFileWriter {
 
 		// Create the CSVFormat object with "\n" as a record delimiter
 		CSVFormat csvFileFormatHeard = CSVFormat.newFormat(',').withHeader(HEADER_CSV_USER)
-		        .withRecordSeparator(NEW_LINE_SEPARATOR);
+				.withRecordSeparator(NEW_LINE_SEPARATOR);
 
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
 
@@ -151,6 +158,92 @@ public class CsvFileWriter {
 
 		} catch (Exception e) {
 			logger.error("Error in CsvFileWriter!\n Message: ", e);
+		} finally {
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+				csvFilePrinter.close();
+
+			} catch (IOException e) {
+				logger.error("Error while flushing/closing fileWriter/csvPrinter !\n Message: ", e);
+			}
+		}
+	}
+
+	@SuppressWarnings("resource")
+	public static void writeBookCsv(String fileName, List<BookInfo> bookInfo) throws FileNotFoundException {
+		Writer fileWriter = null;
+		CSVPrinter csvFilePrinter = null;
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormatHeard = CSVFormat.newFormat(',').withHeader(HEADER_CSV_BOOK)
+				.withRecordSeparator(NEW_LINE_SEPARATOR);
+
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
+		try {
+			// initialize FileWriter object
+			fileWriter = new OutputStreamWriter(new FileOutputStream(fileName));
+
+			// Create CSV file header
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormatHeard);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!Helpers.isEmpty(bookInfo)) {
+				// Write a new borrowed object list to the CSV file
+				for (BookInfo item : bookInfo) {
+					int count = 0;
+					for (BookDetailInfo bookDetail : item.getBookDetail()) {
+						List<String> bookDataRecord = new ArrayList<String>();
+						if (count == 0) {
+							bookDataRecord.add(String.valueOf(item.getBookId()));
+							bookDataRecord.add(String.valueOf(item.getBookCode()));
+							bookDataRecord.add(item.getName());
+							bookDataRecord.add(Helpers.formatCurrency(item.getPrice()));
+							bookDataRecord.add(String.valueOf(item.getNumberBook()));
+							bookDataRecord.add(String.valueOf(item.getNumberRest()));
+							bookDataRecord.add(String.valueOf(item.getNumberBorrowed()));
+							bookDataRecord.add(item.getCategoriesCode());
+							bookDataRecord.add(item.getCategoriesName());
+							bookDataRecord.add(item.getPublishersName());
+							bookDataRecord.add(item.getPublishersPhone());
+							bookDataRecord.add(item.getPublishersEmail());
+							bookDataRecord.add(item.getPublishersAddress());
+
+						} else {
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+							bookDataRecord.add(String.valueOf(""));
+						}
+
+						// Author
+						bookDataRecord.add(bookDetail.getAuthorsName());
+						bookDataRecord.add(bookDetail.getSex());
+						bookDataRecord.add(bookDetail.getEmail());
+						bookDataRecord.add(bookDetail.getPhone());
+						bookDataRecord.add(bookDetail.getAddress());
+						bookDataRecord.add(bookDetail.getBirthday());
+
+						csvFilePrinter.printRecord(bookDataRecord);
+						count ++;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error in CsvFileWriter!\n Message: " + e.getMessage());
 		} finally {
 			try {
 				fileWriter.flush();

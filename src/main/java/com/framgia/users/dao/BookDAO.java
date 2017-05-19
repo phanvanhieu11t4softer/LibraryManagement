@@ -1,5 +1,7 @@
 package com.framgia.users.dao;
 
+import java.util.List;
+
 import com.framgia.users.model.Book;
 
 /**
@@ -16,4 +18,12 @@ public interface BookDAO {
 	// Find by idBook
 	public Book findBookId(String bookId);
 
+	// Update book
+	void update(Book mBook);
+	
+	// find by conditon form of admin
+	List<Object[]> findByConditon(String book, String categoryId);
+
+	// Find by idBook
+	Book findBookIdForUpdate(int bookId);
 }
