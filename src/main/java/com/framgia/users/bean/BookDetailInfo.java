@@ -10,7 +10,6 @@ public class BookDetailInfo {
 	private String phone;
 	private String birthday;
 	private String address;
-	private BookInfo book;
 
 	public BookDetailInfo() {
 	}
@@ -30,6 +29,16 @@ public class BookDetailInfo {
 		this.book = book;
 	}
 
+	private AuthorInfo author;
+	private BookInfo book;
+
+	public BookDetailInfo(int bookDetailId, AuthorInfo author, BookInfo book) {
+		super();
+		this.bookDetailId = bookDetailId;
+		this.author = author;
+		this.book = book;
+	}
+	
 	public BookInfo getBook() {
 		return book;
 	}

@@ -48,4 +48,11 @@ public class PublishersDAOImpl extends AbstractDao<Integer, Publishers> implemen
 		logger.info("Insert success.");
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Publishers> listPublisher() {
+		List<Publishers> publisherList = getSession().createQuery("from Publishers where deleteFlag = '0'").list();
+		return publisherList;
+	}
+
 }

@@ -254,6 +254,11 @@ public class ConvertDataModelAndBean {
 			bBookDetail.setBirthday(mBookDetail.getAuthor().getBirthday().toString());
 			bBookDetail.setAddress(mBookDetail.getAuthor().getAddress());
 
+			
+			if (null != mBookDetail.getBook()) {
+				bBookDetail.setBook(converBookModelToBean(mBookDetail.getBook()));
+			}
+			
 		}
 
 		return bBookDetail;

@@ -47,4 +47,11 @@ public class AuthorDAOImpl extends AbstractDao<Integer, Author> implements Const
 		logger.info("Insert success.");
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Author> listAuthor() {
+		List<Author> authorList = getSession().createQuery("from Author where deleteFlag = '0'").list();
+		return authorList;
+	}
+
 }

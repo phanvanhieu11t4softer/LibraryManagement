@@ -441,7 +441,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 							listErrorLog.add(Helpers.checkIntegerColumn(bookDetail[0], Constant.BOOK_ID, line));
 						} else {
 							// Check key id Book
-							if (bookDAO.findBookId(bookDetail[0]) == null) {
+							if (bookDAO.findBookId(Integer.parseInt(bookDetail[0])) == null) {
 
 								// Gen errorLog
 								errorLog = new ErrorInfo();
@@ -918,6 +918,8 @@ public class ImportDataServiceImpl implements ImportDataService {
 					bookData.setStatusBook(book[5]);
 					bookData.setNumberBook(Integer.parseInt(book[6]));
 					bookData.setNumberPage(Integer.parseInt(book[7]));
+					bookData.setNumberBorrowed(0);
+					bookData.setNumberRest(0);
 					bookData.setUserCreate(userName);
 					bookData.setUserUpdate(userName);
 					bookData.setDateCreate(dateCreate);

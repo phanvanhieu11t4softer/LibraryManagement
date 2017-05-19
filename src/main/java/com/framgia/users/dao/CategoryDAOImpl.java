@@ -72,5 +72,5 @@ public class CategoryDAOImpl extends AbstractDao<Integer, Categories> implements
 				setParameter("deleteFlag", ConstantModel.DEL_FLG)
 				.list();
 		return categoryList;
-	}
+}
 }

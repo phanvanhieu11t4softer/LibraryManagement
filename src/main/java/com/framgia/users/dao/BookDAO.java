@@ -16,7 +16,10 @@ public interface BookDAO {
 	public void insertBook(Book book);
 
 	// Find by idBook
-	public Book findBookId(String bookId);
+	public Book findBookId(int bookId);
+	
+	// find conditon Book
+	public List<Object[]> findByConditon(String txtName, int txtCategoryId, int txtPublisherId, int txtAuthorId);
 
 	// Update book
 	void update(Book mBook);

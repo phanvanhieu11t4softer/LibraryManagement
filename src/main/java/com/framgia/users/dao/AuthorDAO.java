@@ -1,5 +1,7 @@
 package com.framgia.users.dao;
 
+import java.util.List;
+
 import com.framgia.users.model.Author;
 
 /**
@@ -15,4 +17,7 @@ public interface AuthorDAO {
 
 	// Insert data into table Author
 	public void insertAuthor(Author author);
+
+	// Find list Author
+	public List<Author> listAuthor();
 }

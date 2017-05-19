@@ -1,5 +1,7 @@
 package com.framgia.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.framgia.users.bean.AuthorInfo;
+import com.framgia.users.bean.CategoryInfo;
+import com.framgia.users.bean.PublisherInfo;
 import com.framgia.users.bean.UserInfo;
+import com.framgia.users.service.BorrowBookService;
 import com.framgia.users.service.MailService;
 import com.framgia.users.service.ManagementUsersService;
 
@@ -46,12 +53,35 @@ public class MainController {
 
 	@Autowired
 	ManagementUsersService managementUsersService;
+	
+	@Autowired
+	BorrowBookService borrowBookService;
 
 	@RequestMapping(value = { "/home" }, method = RequestMethod.GET)
-	public ModelAndView home() {
+	public ModelAndView home(Model m) {
 
+		// Get Authentication 
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		ModelAndView model = new ModelAndView();
-		model.setViewName("home");
+		
+		if("[ROLE_STUDENT]".equals(auth.getAuthorities().toString())){
+			List<CategoryInfo> categoryInfoList = new ArrayList<CategoryInfo>();
+			List<AuthorInfo> authorInfoList = new ArrayList<AuthorInfo>();
+			List<PublisherInfo> publisherInfoList = new ArrayList<PublisherInfo>();
+			
+			categoryInfoList = borrowBookService.listCategory();
+			authorInfoList = borrowBookService.listAuthor();
+			publisherInfoList = borrowBookService.listPublisher();
+			
+	    	m.addAttribute("listCategory", categoryInfoList);
+	    	m.addAttribute("authorInfoList", authorInfoList);
+	    	m.addAttribute("publisherInfoList", publisherInfoList);
+	    	
+	    	model.setViewName("borrowBook");
+	    }else{
+	    	model.setViewName("home");
+	    }
+		
 		return model;
 
 	}

@@ -249,6 +249,65 @@
 			<add-attribute value="/assets/js/js-password.js" />
 		</put-list-attribute>
 	</definition>
+	
+	<!-- User - borrow book -->
+	<definition name="borrowBook" extends="baseLayout">
+		<put-attribute name="title" value="SEARCH BOOK" />
+		<put-attribute name="screenname" value="SEARCH BOOK" />
+		<put-attribute name="menu" value="/WEB-INF/pages/user/menu.jsp" />
+		<put-attribute name="body"
+			value="/WEB-INF/pages/user/viewListBook.jsp" />
+		<put-list-attribute name="cssDefault">
+			<add-attribute value="/assets/css/bootstrap.min.css" />
+			<add-attribute value="/assets/css/dataTables.bootstrap.min.css" />
+			<add-attribute value="/assets/css/style.css" />
+			<add-attribute value="/assets/js/dataTables.bootstrap.min.css" />
+			<add-attribute value="/assets/js/jquery.dataTables.min.css" />
+		</put-list-attribute>
+		<put-list-attribute name="jsDefault">
+			<add-attribute value="/assets/js/jquery.min.js" />
+			<add-attribute value="/assets/js/bootstrap.min.js" />
+			<add-attribute value="/assets/js/bootstrap-datepicker.js" />
+			<add-attribute value="/assets/js/init.js" />
+			<add-attribute value="/assets/js/bootstrap.min.js" />
+			<add-attribute value="/assets/js/jquery.dataTables.min.js" />
+			<add-attribute value="/assets/js/jquery.validate.min.js" />
+		</put-list-attribute>
+		<put-list-attribute name="jsAdd">
+			<add-attribute value="/assets/js/customize-User/listBook.js" />
+		</put-list-attribute>
+	</definition>
+	
+	<!-- User - cart book -->
+	<definition name="cartBook" extends="baseLayout">
+		<put-attribute name="title" value="BORROW BOOK" />
+		<put-attribute name="screenname" value="BORROW BOOK" />
+		<put-attribute name="body"
+			value="/WEB-INF/pages/user/cartBorrowBook.jsp" />
+		<put-list-attribute name="cssDefault">
+			<add-attribute value="/assets/css/bootstrap.min.css" />
+			<add-attribute value="/assets/css/dataTables.bootstrap.min.css" />
+			<add-attribute value="/assets/css/style.css" />
+			<add-attribute value="/assets/js/dataTables.bootstrap.min.css" />
+			<add-attribute value="/assets/js/jquery.dataTables.min.css" />
+		</put-list-attribute>
+		<put-list-attribute name="jsDefault">
+			<add-attribute value="/assets/js/jquery.min.js" />
+			<add-attribute value="/assets/js/bootstrap.min.js" />
+			<add-attribute value="/assets/js/bootstrap-datepicker.js" />
+			<add-attribute value="/assets/js/init.js" />
+			<add-attribute value="/assets/js/bootstrap.min.js" />
+			<add-attribute value="/assets/js/jquery.dataTables.min.js" />
+			<add-attribute value="/assets/js/jquery.validate.min.js" />
+		</put-list-attribute>
+		<put-list-attribute name="jsAdd">
+			<add-attribute value="/assets/js/calendar/jquery-ui.js" />
+			<add-attribute value="/assets/js/customize-User/cartBorrowBook.js" />
+		</put-list-attribute>
+		<put-list-attribute name="cssAdd">
+			<add-attribute value="/assets/js/calendar/jquery-ui.css" />
+		</put-list-attribute>
+	</definition>
 
 	<!-- Management Book -->
 	<definition name="managementBook" extends="baseLayout">

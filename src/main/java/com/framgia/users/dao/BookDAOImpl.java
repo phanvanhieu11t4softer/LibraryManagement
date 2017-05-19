@@ -42,11 +42,11 @@ public class BookDAOImpl extends AbstractDao<Integer, Book> implements ConstantM
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Book findBookId(String bookId) {
+	public Book findBookId(int bookId) {
 		List<Book> book = new ArrayList<Book>();
 
-		book = getOpenSession().createQuery("from Book where bookId=:bookId and deleteFlag=:delFlg")
-				.setParameter("bookId", Integer.parseInt(bookId)).setParameter("delFlg", ConstantModel.DEL_FLG).list();
+		book = getSession().createQuery("from Book where bookId=:bookId and deleteFlag=:delFlg")
+				.setParameter("bookId", bookId).setParameter("delFlg", ConstantModel.DEL_FLG).list();
 
 		if (book.size() > 0) {
 
@@ -59,7 +59,7 @@ public class BookDAOImpl extends AbstractDao<Integer, Book> implements ConstantM
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]>  findByConditon(String bookText, String category) {
+	public List<Object[]> findByConditon(String bookText, String category) {
 
 		logger.info("Search list Book.");
 		List<Object[]> listResult = null;
@@ -100,6 +100,61 @@ public class BookDAOImpl extends AbstractDao<Integer, Book> implements ConstantM
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "finally" })
+	@Override
+	public List<Object[]> findByConditon(String txtName, int txtCategoryId, int txtPublisherId, int txtAuthorId) {
+		logger.info("Search list book.");
+
+		List<Object[]> listResult = null;
+		Session session = getSession();
+
+		try {
+			String sql = "select distinct bk.bookId, bk.name, cat.name, pub.publishersName, bk.bookCode, bk.numberBook, bk.numberRest"
+					+ " from Book bk inner join bk.bookDetail bkDetail inner join bkDetail.author au inner join bk.categories cat inner join bk.publishers pub where bkDetail.deleteFlag = :deleteFlag";
+			if (null != txtName && StringUtils.isNotEmpty(txtName)) {
+				sql = sql + " and bk.name like :name";
+			}
+
+			if (txtCategoryId > 0) {
+				sql = sql + " and cat.categoriesId = :categoriesId";
+			}
+
+			if (txtAuthorId > 0) {
+				sql = sql + " and au.authorsId = :authorsId";
+			}
+
+			if (txtPublisherId > 0) {
+				sql = sql + " and pub.publishersId = :publishersId";
+			}
+
+			Query query = session.createQuery(sql);
+
+			query.setParameter("deleteFlag", ConstantModel.DEL_FLG);
+			if (null != txtName && StringUtils.isNotEmpty(txtName)) {
+				query.setParameter("name", "%" + txtName + "%");
+			}
+
+			if (txtCategoryId > 0) {
+				query.setParameter("categoriesId", txtCategoryId);
+			}
+
+			if (txtAuthorId > 0) {
+				query.setParameter("authorsId", txtAuthorId);
+			}
+
+			if (txtPublisherId > 0) {
+				query.setParameter("publishersId", txtPublisherId);
+			}
+
+			listResult = query.list();
+			logger.info("Search list book end.");
+		} catch (Exception e) {
+			logger.error("Error search list book: " + e.getMessage());
+		} finally {
+			return listResult;
+		}
+}
+
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	public Book findBookIdForUpdate(int bookId) {
@@ -115,5 +170,6 @@ public class BookDAOImpl extends AbstractDao<Integer, Book> implements ConstantM
 			return items.get(0);
 		}
 		return null;
-	}
+}
+
 }

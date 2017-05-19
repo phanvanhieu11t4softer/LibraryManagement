@@ -163,4 +163,41 @@ public class BorrowedBookDAOImpl extends AbstractDao<Integer, Borroweds> impleme
 		}
 		return null;
 	}
+
+	@Override
+	public Borroweds getLastRecord() {
+		logger.info("Search borrowed by Id");
+
+		Borroweds borrowed = new Borroweds();
+		try {
+			Session session = getSession();
+			String sql = "FROM Borroweds where deleteFlag = :deleteFlag order by borrowedId DESC";
+
+			Query query = session.createQuery(sql);
+
+			query.setParameter("deleteFlag", ConstantModel.DEL_FLG);
+
+			query.setMaxResults(1);
+
+			borrowed = (Borroweds) query.uniqueResult();
+
+			logger.info("Search end.");
+			
+			return borrowed;
+
+		} catch (Exception e) {
+			logger.error("Search find by id error: " + e.getMessage());
+
+			return null;
+		}
+	}
+
+	@Override
+	public int insertBorrowBook(Borroweds borroweds) {
+		
+		// Insert data into table Books
+		getOpenSession().saveOrUpdate(borroweds);
+		logger.info("Insert success.");
+		return borroweds.getBorrowedId();
+	}
 }

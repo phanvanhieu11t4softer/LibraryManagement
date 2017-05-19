@@ -1,5 +1,7 @@
 package com.framgia.users.dao;
 
+import java.util.List;
+
 import com.framgia.users.model.Publishers;
 
 /**
@@ -15,4 +17,6 @@ public interface PublishersDAO {
 
 	// Insert data into table Publishers
 	public void insertPublisher(Publishers publishers);
+
+	public List<Publishers> listPublisher();
 }

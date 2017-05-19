@@ -16,4 +16,8 @@ public interface BorrowedBookDAO {
 	void updateBorrowedDetails(BorrowedDetails mBorrowedDetails);
 	
 	Borroweds findToUpdate(int borrowedId);
+
+	Borroweds getLastRecord();
+
+	int insertBorrowBook(Borroweds borroweds);
 }
